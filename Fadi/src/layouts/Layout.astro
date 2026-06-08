@@ -22,7 +22,10 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#6b1426" />
     <link rel="icon" type="image/png" href="/favicon-fadi.png" />
+    <link rel="apple-touch-icon" href="/icons/pwa-192.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
 
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
@@ -204,13 +207,112 @@ const {
           padding: 3.5rem 0;
         }
       }
+
+      .pwa-global-banner {
+        background: var(--bg-soft);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .pwa-global-inner {
+        width: 100%;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0.85rem 1.5rem;
+        display: grid;
+        gap: 0.75rem;
+      }
+
+      .pwa-install,
+      .pwa-notice {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.9rem 1rem;
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: 0 8px 28px rgba(44, 38, 32, 0.04);
+      }
+
+      .pwa-banner-copy {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+      }
+
+      .pwa-banner-copy strong {
+        color: var(--text);
+        font-size: 0.95rem;
+      }
+
+      .pwa-banner-copy span {
+        color: var(--text-muted);
+        font-size: 0.86rem;
+        line-height: 1.45;
+      }
+
+      .pwa-banner-copy span[data-state="success"] {
+        color: #25543d;
+      }
+
+      .pwa-banner-copy span[data-state="error"] {
+        color: #7d1f1f;
+      }
+
+      .pwa-install-steps {
+        display: block;
+      }
+
+      .pwa-banner-btn {
+        white-space: nowrap;
+        padding-inline: 1.1rem;
+      }
+
+      @media (max-width: 640px) {
+        .pwa-install,
+        .pwa-notice {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+
+        .pwa-banner-btn {
+          width: 100%;
+          justify-content: center;
+        }
+      }
     </style>
   </head>
   <body>
     <Header />
+    <aside class="pwa-global-banner" data-pwa-banner aria-label="App FADI Necrologi">
+      <div class="pwa-global-inner">
+        <div class="pwa-install" data-pwa-install>
+          <div class="pwa-banner-copy">
+            <strong>Installa l'app FADI Necrologi</strong>
+            <span data-pwa-install-status>Apri gli annunci funebri direttamente dalla schermata principale.</span>
+            <span class="pwa-install-steps" data-pwa-install-steps>Dal menu del browser scegli Installa app o Aggiungi alla schermata Home.</span>
+          </div>
+          <button class="btn btn-outline pwa-banner-btn" type="button" data-pwa-install-button hidden>
+            Installa app
+          </button>
+        </div>
+
+        <div class="pwa-notice" data-pwa-notifications hidden>
+          <div class="pwa-banner-copy">
+            <strong>Avvisi nuovi necrologi</strong>
+            <span data-pwa-notifications-status>Ricevi un avviso quando viene pubblicato un nuovo necrologio.</span>
+          </div>
+          <button class="btn btn-gold pwa-banner-btn" type="button" data-pwa-notifications-button>
+            Attiva notifiche
+          </button>
+        </div>
+      </div>
+    </aside>
     <main>
       <slot />
     </main>
     <Footer />
+    <script src="/pwa-client.js" defer></script>
   </body>
 </html>

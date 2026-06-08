@@ -1,0 +1,220 @@
+(function () {
+  const swPath = '/sw.js';
+  let deferredInstallPrompt = null;
+
+  window.addEventListener('beforeinstallprompt', (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    document.dispatchEvent(new CustomEvent('fadi:pwa-install-ready'));
+  });
+
+  window.addEventListener('appinstalled', () => {
+    deferredInstallPrompt = null;
+    document.dispatchEvent(new CustomEvent('fadi:pwa-installed'));
+  });
+
+  function base64UrlToUint8Array(value) {
+    const padding = '='.repeat((4 - (value.length % 4)) % 4);
+    const base64 = (value + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const raw = window.atob(base64);
+    return Uint8Array.from([...raw].map((char) => char.charCodeAt(0)));
+  }
+
+  async function registerServiceWorker() {
+    if (!('serviceWorker' in navigator)) return null;
+    return navigator.serviceWorker.register(swPath);
+  }
+
+  function isStandalone() {
+    return window.matchMedia('(display-mode: standalone)').matches
+      || window.navigator.standalone === true;
+  }
+
+  function getInstallGuidance() {
+    const ua = window.navigator.userAgent || '';
+    const platform = window.navigator.platform || '';
+    const isIos = /iphone|ipad|ipod/i.test(ua)
+      || (platform === 'MacIntel' && window.navigator.maxTouchPoints > 1);
+    const isAndroid = /android/i.test(ua);
+    const isDesktop = !isIos && !isAndroid;
+
+    if (isStandalone()) {
+      return {
+        status: "L'app FADI Necrologi e gia installata.",
+        steps: 'La trovi nella schermata principale o tra le app del dispositivo.',
+        canPrompt: false,
+        button: ''
+      };
+    }
+
+    if (deferredInstallPrompt) {
+      return {
+        status: "Installa l'app per aprire subito gli annunci funebri.",
+        steps: 'Tocca Installa e conferma dal messaggio del browser.',
+        canPrompt: true,
+        button: 'Installa app'
+      };
+    }
+
+    if (isIos) {
+      return {
+        status: 'Installa FADI Necrologi su iPhone o iPad.',
+        steps: 'Tocca Condividi, poi Aggiungi alla schermata Home e conferma con Aggiungi.',
+        canPrompt: false,
+        button: ''
+      };
+    }
+
+    if (isAndroid) {
+      return {
+        status: 'Installa FADI Necrologi sul telefono.',
+        steps: 'Apri il menu del browser e scegli Installa app o Aggiungi a schermata Home.',
+        canPrompt: false,
+        button: ''
+      };
+    }
+
+    if (isDesktop) {
+      return {
+        status: 'Installa FADI Necrologi sul computer.',
+        steps: "Usa l'icona Installa nella barra indirizzi o la voce Installa app nel menu del browser.",
+        canPrompt: false,
+        button: ''
+      };
+    }
+
+    return {
+      status: "Installa l'app FADI Necrologi.",
+      steps: 'Usa il comando Installa app o Aggiungi alla schermata Home del browser.',
+      canPrompt: false,
+      button: ''
+    };
+  }
+
+  function initInstallControl(root) {
+    const button = root.querySelector('[data-pwa-install-button]');
+    const status = root.querySelector('[data-pwa-install-status]');
+    const steps = root.querySelector('[data-pwa-install-steps]');
+    if (!status || !steps) return;
+
+    function render() {
+      const guidance = getInstallGuidance();
+      root.hidden = false;
+      status.textContent = guidance.status;
+      steps.textContent = guidance.steps;
+
+      if (button) {
+        button.hidden = !guidance.canPrompt;
+        button.textContent = guidance.button || 'Installa app';
+      }
+
+      if (isStandalone()) {
+        root.hidden = true;
+      }
+    }
+
+    button?.addEventListener('click', async () => {
+      if (!deferredInstallPrompt) return;
+      button.disabled = true;
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice.catch(() => undefined);
+      deferredInstallPrompt = null;
+      button.disabled = false;
+      render();
+    });
+
+    document.addEventListener('fadi:pwa-install-ready', render);
+    document.addEventListener('fadi:pwa-installed', render);
+    render();
+  }
+
+  async function getPublicKey() {
+    const response = await fetch('/api/notifications/public-key', {
+      headers: { 'Accept': 'application/json' }
+    });
+    const json = await response.json().catch(() => ({}));
+    return json.enabled ? json.publicKey : '';
+  }
+
+  function setStatus(root, message, state) {
+    const status = root.querySelector('[data-pwa-notifications-status]');
+    if (!status) return;
+    status.textContent = message;
+    status.dataset.state = state || '';
+  }
+
+  async function initNotificationControl(root, registration) {
+    const button = root.querySelector('[data-pwa-notifications-button]');
+    if (!button || !registration || !('PushManager' in window) || !('Notification' in window)) return;
+
+    root.hidden = false;
+    let subscription = await registration.pushManager.getSubscription();
+
+    function render() {
+      if (subscription) {
+        button.textContent = 'Notifiche attive';
+        button.dataset.active = 'true';
+        setStatus(root, 'Riceverai un avviso quando viene pubblicato un nuovo necrologio.', 'success');
+        return;
+      }
+
+      button.textContent = Notification.permission === 'denied' ? 'Notifiche bloccate' : 'Attiva notifiche';
+      button.dataset.active = 'false';
+      setStatus(root, Notification.permission === 'denied'
+        ? 'Le notifiche sono bloccate nelle impostazioni del browser.'
+        : 'Ricevi un avviso quando viene pubblicato un nuovo necrologio.', Notification.permission === 'denied' ? 'error' : 'idle');
+    }
+
+    button.addEventListener('click', async () => {
+      if (subscription) return;
+
+      button.disabled = true;
+      setStatus(root, 'Attivazione in corso...', 'idle');
+
+      try {
+        const publicKey = await getPublicKey();
+        if (!publicKey) throw new Error('Notifiche non configurate.');
+
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') throw new Error('Permesso notifiche non concesso.');
+
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: base64UrlToUint8Array(publicKey)
+        });
+
+        const response = await fetch('/api/notifications/subscribe', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(subscription)
+        });
+
+        if (!response.ok) {
+          await subscription.unsubscribe();
+          subscription = null;
+          throw new Error('Non siamo riusciti a salvare la sottoscrizione.');
+        }
+      } catch (error) {
+        setStatus(root, error.message || 'Notifiche non disponibili.', 'error');
+      } finally {
+        button.disabled = false;
+        render();
+      }
+    });
+
+    render();
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const registration = await registerServiceWorker().catch(() => null);
+    document.querySelectorAll('[data-pwa-install]').forEach((root) => {
+      initInstallControl(root);
+    });
+    document.querySelectorAll('[data-pwa-notifications]').forEach((root) => {
+      initNotificationControl(root, registration);
+    });
+  });
+})();

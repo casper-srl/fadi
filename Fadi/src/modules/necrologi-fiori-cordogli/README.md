@@ -27,6 +27,8 @@ Modulo Astro copiabile per integrare CasPer in un sito di onoranze funebri.
 CASPER_API_KEY=...
 ```
 
+Se riusi anche la PWA con notifiche nuovi necrologi, copia le rotte `/api/notifications/*`, `public/sw.js`, `public/manifest.webmanifest`, `public/pwa-client.js`, `public/offline.html`, le icone PWA e configura `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`, `CRON_SECRET`, `KV_REST_API_URL`, `KV_REST_API_TOKEN`.
+
 Per abilitare il pagamento online quando il gateway e gli endpoint CasPer saranno disponibili:
 
 ```env

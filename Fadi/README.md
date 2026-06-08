@@ -46,6 +46,24 @@ CASPER_API_KEY=...
 
 `CASPER_API_KEY` deve restare solo lato server: le pagine e i form usano endpoint Astro interni, cosi' la chiave non finisce nel browser.
 
+Per la PWA e le notifiche nuovi necrologi servono anche:
+
+```env
+SITE_URL=https://fadi-lake.vercel.app
+VAPID_PUBLIC_KEY=...
+VAPID_PRIVATE_KEY=...
+VAPID_SUBJECT=mailto:info@fadi.it
+CRON_SECRET=...
+KV_REST_API_URL=...
+KV_REST_API_TOKEN=...
+```
+
+Le chiavi VAPID si generano con:
+
+```sh
+npx web-push generate-vapid-keys
+```
+
 ## Build
 
 ```sh

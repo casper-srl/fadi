@@ -41,6 +41,26 @@
         { "key": "CDN-Cache-Control", "value": "no-store" },
         { "key": "Vercel-CDN-Cache-Control", "value": "no-store" }
       ]
+    },
+    {
+      "source": "/api/notifications/:path*",
+      "headers": [
+        { "key": "Cache-Control", "value": "private, no-store, max-age=0, must-revalidate" },
+        { "key": "CDN-Cache-Control", "value": "no-store" },
+        { "key": "Vercel-CDN-Cache-Control", "value": "no-store" }
+      ]
+    },
+    {
+      "source": "/sw.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache" }
+      ]
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/notifications/check-necrologi",
+      "schedule": "*/10 * * * *"
     }
   ],
   "redirects": [
