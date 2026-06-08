@@ -103,16 +103,6 @@ const encodedShareText = encodeURIComponent(memorialShareText);
       )}
       
       <div class="dates-eta">
-        {dataMorteIta && (
-          <div class="info-tag">
-            <span class="tag-icon" aria-label="Data del decesso">
-              <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
-                <path d="M12 3v18M8 8h8" />
-              </svg>
-            </span>
-            <span class="tag-val">{dataMorteIta}</span>
-          </div>
-        )}
         {dataNascitaIta && (
           <div class="info-tag">
             <span class="tag-icon" aria-label="Data di nascita">
@@ -121,6 +111,16 @@ const encodedShareText = encodeURIComponent(memorialShareText);
               </svg>
             </span>
             <span class="tag-val">{dataNascitaIta}</span>
+          </div>
+        )}
+        {dataMorteIta && (
+          <div class="info-tag">
+            <span class="tag-icon" aria-label="Data del decesso">
+              <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                <path d="M12 3v18M8 8h8" />
+              </svg>
+            </span>
+            <span class="tag-val">{dataMorteIta}</span>
           </div>
         )}
       </div>
