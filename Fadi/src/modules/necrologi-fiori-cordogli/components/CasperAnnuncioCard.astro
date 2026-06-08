@@ -50,7 +50,11 @@ function formatCerimonia(dateTimeStr?: string) {
         />
       ) : (
         <div class="card-img-placeholder">
-          <div class="placeholder-cross">✝</div>
+          <div class="placeholder-cross" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M12 3v18M8 8h8" />
+            </svg>
+          </div>
         </div>
       )}
       <div class="card-img-border"></div>
@@ -87,7 +91,12 @@ function formatCerimonia(dateTimeStr?: string) {
       <div class="card-ceremonies">
         {funerale.data_ora ? (
           <div class="ceremony-preview">
-            <span class="ceremony-icon" title="Funerale">✝</span>
+            <span class="ceremony-icon" title="Funerale" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3v18" />
+                <path d="M8 8h8" />
+              </svg>
+            </span>
             <div class="ceremony-text">
               <strong>Funerale:</strong> {formatCerimonia(funerale.data_ora)}
             </div>
@@ -166,10 +175,21 @@ function formatCerimonia(dateTimeStr?: string) {
   }
 
   .placeholder-cross {
-    font-size: 3.5rem;
+    width: 3.5rem;
+    height: 3.5rem;
     color: var(--gold, #b8966e);
     opacity: 0.35;
-    font-family: var(--font-serif, serif);
+  }
+
+  .placeholder-cross svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.35;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
   .card-img-border {

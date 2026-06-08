@@ -47,7 +47,11 @@ const encodedShareText = encodeURIComponent(memorialShareText);
           />
         ) : (
           <div class="memorial-image-placeholder">
-            <div class="placeholder-cross-lg">✝</div>
+            <div class="placeholder-cross-lg" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M12 3v18M8 8h8" />
+              </svg>
+            </div>
           </div>
         )}
         <div class="frame-gold-border"></div>
@@ -87,7 +91,11 @@ const encodedShareText = encodeURIComponent(memorialShareText);
 
     <!-- Right side: details and text -->
     <div class="memorial-primary-info">
-      <div class="emblem" aria-hidden="true">✝</div>
+      <div class="emblem" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <path d="M12 3v18M8 8h8" />
+        </svg>
+      </div>
       <span class="annuncio-label">In Memoria di</span>
       <h1 class="deceased-name">{nomeCompleto}</h1>
       

@@ -17,7 +17,11 @@ const {
     <!-- Emblem -->
     <div class="hero-emblem" aria-hidden="true">
       <div class="emblem-ring">
-        <span class="emblem-cross">✝</span>
+        <span class="emblem-cross">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M12 3v18M8 8h8" />
+          </svg>
+        </span>
       </div>
     </div>
 
@@ -141,9 +145,24 @@ const {
   }
 
   .emblem-cross {
-    font-size: 1.8rem;
+    width: 2rem;
+    height: 2rem;
     color: var(--gold);
     opacity: 0.95;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .emblem-cross svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.55;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
   /* Text */

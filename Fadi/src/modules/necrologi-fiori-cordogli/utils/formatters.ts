@@ -1,6 +1,6 @@
 import type { Defunto } from '../types';
 
-export function formatMorte(dateStr?: string) {
+function formatItalianDate(dateStr?: string) {
   if (!dateStr) return '';
   const parts = dateStr.split('-');
   if (parts.length === 3) {
@@ -18,13 +18,12 @@ export function formatMorte(dateStr?: string) {
   return dateStr;
 }
 
+export function formatMorte(dateStr?: string) {
+  return formatItalianDate(dateStr);
+}
+
 export function formatNascita(dateStr?: string) {
-  if (!dateStr) return '';
-  const parts = dateStr.split('-');
-  if (parts.length === 3) {
-    return `${parts[2]}/${parts[1]}/${parts[0]}`;
-  }
-  return dateStr;
+  return formatItalianDate(dateStr);
 }
 
 export function formatCerimoniaOra(dateTimeStr?: string) {
