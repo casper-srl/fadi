@@ -1,7 +1,10 @@
 (function () {
   const swPath = '/sw.js';
   const installedStorageKey = 'fadi-pwa-installed';
-  const dismissedCookieName = 'fadi_pwa_alerts_hidden';
+  const dismissedCookieNames = {
+    install: 'fadi_pwa_install_hidden',
+    notifications: 'fadi_pwa_notifications_hidden'
+  };
   const dismissedDays = 10;
   let deferredInstallPrompt = null;
 
@@ -59,33 +62,49 @@
     return isStandalone() || hasStoredInstall();
   }
 
-  function setDismissedCookie() {
-    const expires = new Date(Date.now() + dismissedDays * 24 * 60 * 60 * 1000).toUTCString();
-    document.cookie = `${dismissedCookieName}=1; expires=${expires}; path=/; SameSite=Lax`;
+  function getPanelDismissKey(root) {
+    if (!root?.closest('[data-pwa-banner][data-pwa-dismissible]')) return '';
+    if (root?.hasAttribute('data-pwa-install')) return 'install';
+    if (root?.hasAttribute('data-pwa-notifications')) return 'notifications';
+    return '';
   }
 
-  function hasDismissedCookie() {
+  function setDismissedCookie(root) {
+    const key = getPanelDismissKey(root);
+    const cookieName = dismissedCookieNames[key];
+    if (!cookieName) return;
+
+    const expires = new Date(Date.now() + dismissedDays * 24 * 60 * 60 * 1000).toUTCString();
+    document.cookie = `${cookieName}=1; expires=${expires}; path=/; SameSite=Lax`;
+  }
+
+  function hasDismissedCookie(root) {
+    const key = getPanelDismissKey(root);
+    const cookieName = dismissedCookieNames[key];
+    if (!cookieName) return false;
+
     return document.cookie
       .split(';')
       .map((part) => part.trim())
-      .some((part) => part === `${dismissedCookieName}=1`);
+      .some((part) => part === `${cookieName}=1`);
   }
 
-  function isDismissibleBannerDismissed(banner) {
-    return banner?.hasAttribute('data-pwa-dismissible') && hasDismissedCookie();
+  function isDismissiblePanelDismissed(root) {
+    return hasDismissedCookie(root);
   }
 
   function initDismissControls() {
     document.querySelectorAll('[data-pwa-dismiss]').forEach((button) => {
       button.addEventListener('click', () => {
-        const banner = button.closest('[data-pwa-banner]');
-        setDismissedCookie();
-        if (banner) banner.hidden = true;
+        const panel = button.closest('[data-pwa-install], [data-pwa-notifications]');
+        setDismissedCookie(panel);
+        if (panel) panel.hidden = true;
+        updateGlobalBannerVisibility();
       });
     });
 
-    document.querySelectorAll('[data-pwa-banner][data-pwa-dismissible]').forEach((banner) => {
-      if (hasDismissedCookie()) banner.hidden = true;
+    document.querySelectorAll('[data-pwa-install], [data-pwa-notifications]').forEach((panel) => {
+      if (isDismissiblePanelDismissed(panel)) panel.hidden = true;
     });
   }
 
@@ -187,6 +206,13 @@
         return;
       }
 
+      if (isDismissiblePanelDismissed(root)) {
+        root.hidden = true;
+        if (button) button.hidden = true;
+        updateGlobalBannerVisibility();
+        return;
+      }
+
       const guidance = getInstallGuidance();
       root.hidden = false;
       status.textContent = guidance.status;
@@ -247,6 +273,12 @@
       return;
     }
 
+    if (isDismissiblePanelDismissed(root)) {
+      root.hidden = true;
+      updateGlobalBannerVisibility();
+      return;
+    }
+
     root.hidden = false;
     let subscription = await registration.pushManager.getSubscription();
     let feedback = null;
@@ -259,6 +291,12 @@
     }
 
     function showFeedback(message, state, buttonText) {
+      if (isDismissiblePanelDismissed(root)) {
+        root.hidden = true;
+        updateGlobalBannerVisibility();
+        return;
+      }
+
       feedback = { message, state, buttonText };
       root.hidden = false;
       if (buttonText) button.textContent = buttonText;
@@ -277,6 +315,13 @@
 
     function render() {
       if (isPwaInstalled()) {
+        clearHideSuccessTimer();
+        root.hidden = true;
+        updateGlobalBannerVisibility();
+        return;
+      }
+
+      if (isDismissiblePanelDismissed(root)) {
         clearHideSuccessTimer();
         root.hidden = true;
         updateGlobalBannerVisibility();
@@ -378,11 +423,6 @@
 
   function updateGlobalBannerVisibility() {
     document.querySelectorAll('[data-pwa-banner]').forEach((banner) => {
-      if (isDismissibleBannerDismissed(banner)) {
-        banner.hidden = true;
-        return;
-      }
-
       const visiblePanels = banner.querySelectorAll('[data-pwa-install]:not([hidden]), [data-pwa-notifications]:not([hidden])');
       banner.hidden = visiblePanels.length === 0;
     });
