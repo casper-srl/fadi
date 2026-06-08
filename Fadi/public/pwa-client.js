@@ -1,6 +1,8 @@
 (function () {
   const swPath = '/sw.js';
   const installedStorageKey = 'fadi-pwa-installed';
+  const dismissedCookieName = 'fadi_pwa_alerts_hidden';
+  const dismissedDays = 10;
   let deferredInstallPrompt = null;
 
   window.addEventListener('beforeinstallprompt', (event) => {
@@ -55,6 +57,36 @@
 
   function isPwaInstalled() {
     return isStandalone() || hasStoredInstall();
+  }
+
+  function setDismissedCookie() {
+    const expires = new Date(Date.now() + dismissedDays * 24 * 60 * 60 * 1000).toUTCString();
+    document.cookie = `${dismissedCookieName}=1; expires=${expires}; path=/; SameSite=Lax`;
+  }
+
+  function hasDismissedCookie() {
+    return document.cookie
+      .split(';')
+      .map((part) => part.trim())
+      .some((part) => part === `${dismissedCookieName}=1`);
+  }
+
+  function isDismissibleBannerDismissed(banner) {
+    return banner?.hasAttribute('data-pwa-dismissible') && hasDismissedCookie();
+  }
+
+  function initDismissControls() {
+    document.querySelectorAll('[data-pwa-dismiss]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const banner = button.closest('[data-pwa-banner]');
+        setDismissedCookie();
+        if (banner) banner.hidden = true;
+      });
+    });
+
+    document.querySelectorAll('[data-pwa-banner][data-pwa-dismissible]').forEach((banner) => {
+      if (hasDismissedCookie()) banner.hidden = true;
+    });
   }
 
   async function detectRelatedInstalledApp() {
@@ -346,6 +378,11 @@
 
   function updateGlobalBannerVisibility() {
     document.querySelectorAll('[data-pwa-banner]').forEach((banner) => {
+      if (isDismissibleBannerDismissed(banner)) {
+        banner.hidden = true;
+        return;
+      }
+
       const visiblePanels = banner.querySelectorAll('[data-pwa-install]:not([hidden]), [data-pwa-notifications]:not([hidden])');
       banner.hidden = visiblePanels.length === 0;
     });
@@ -354,6 +391,7 @@
   document.addEventListener('DOMContentLoaded', async () => {
     const registration = await registerServiceWorker().catch(() => null);
     await refreshInstallState();
+    initDismissControls();
     document.querySelectorAll('[data-pwa-install]').forEach((root) => {
       initInstallControl(root);
     });

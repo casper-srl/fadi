@@ -1,0 +1,176 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="App FADI Necrologi | Onoranze Funebri FADI"
+  description="Installa l'app FADI Necrologi per consultare rapidamente gli annunci funebri e ricevere avvisi sui nuovi necrologi pubblicati."
+  hidePwaBanner
+>
+  <section class="app-page">
+    <div class="container app-shell">
+      <div class="app-intro">
+        <p class="section-label">FADI Necrologi</p>
+        <h1 class="section-title">Installa l'app</h1>
+        <div class="divider"></div>
+        <p class="section-text">
+          Apri subito gli annunci funebri dalla schermata principale del telefono e, quando disponibili, attiva gli avvisi per i nuovi necrologi pubblicati.
+        </p>
+      </div>
+
+      <div class="app-actions" aria-label="Installazione app e notifiche">
+        <section class="app-action-card" data-pwa-install>
+          <div class="app-action-copy">
+            <strong>Installa FADI Necrologi</strong>
+            <span data-pwa-install-status>Apri gli annunci funebri direttamente dalla schermata principale.</span>
+            <span data-pwa-install-steps>Dal menu del browser scegli Installa app o Aggiungi alla schermata Home.</span>
+          </div>
+          <button class="btn btn-outline app-action-btn" type="button" data-pwa-install-button hidden>
+            Installa app
+          </button>
+        </section>
+
+        <section class="app-action-card" data-pwa-notifications>
+          <div class="app-action-copy">
+            <strong>Avvisi nuovi necrologi</strong>
+            <span data-pwa-notifications-status>Ricevi un avviso quando viene pubblicato un nuovo necrologio.</span>
+          </div>
+          <button class="btn btn-gold app-action-btn" type="button" data-pwa-notifications-button>
+            Attiva notifiche
+          </button>
+        </section>
+      </div>
+
+      <div class="app-notes">
+        <p>
+          Su Android e computer il pulsante di installazione compare quando il browser lo rende disponibile. Su iPhone e iPad l'installazione passa dal tasto Condividi e dalla voce Aggiungi alla schermata Home.
+        </p>
+        <a href="/necrologi/" class="app-link">Vai agli annunci funebri</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .app-page {
+    background: var(--bg-soft);
+    border-top: 1px solid var(--border);
+    padding: 4rem 0 5rem;
+  }
+
+  .app-shell {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .app-intro {
+    max-width: 720px;
+  }
+
+  .app-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .app-action-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.15rem;
+    border: 1px solid var(--brand-red-border);
+    border-left: 4px solid var(--brand-red);
+    border-radius: var(--radius);
+    background: #fff;
+    box-shadow: 0 8px 28px rgba(44, 38, 32, 0.04);
+  }
+
+  .app-action-copy {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .app-action-copy strong {
+    color: var(--brand-red);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .app-action-copy span {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  .app-action-copy span[data-state="success"] {
+    color: #25543d;
+  }
+
+  .app-action-copy span[data-state="error"] {
+    color: #7d1f1f;
+  }
+
+  .app-action-btn {
+    white-space: nowrap;
+  }
+
+  .app-action-card .btn-gold {
+    background: var(--brand-red);
+    color: #fff;
+  }
+
+  .app-action-card .btn-gold:hover {
+    background: var(--brand-red-light);
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(107, 20, 38, 0.16);
+  }
+
+  .app-action-card .btn-outline {
+    border-color: var(--brand-red);
+    color: var(--brand-red);
+  }
+
+  .app-action-card .btn-outline:hover {
+    background: rgba(107, 20, 38, 0.08);
+    color: var(--brand-red);
+  }
+
+  .app-notes {
+    max-width: 760px;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  .app-link {
+    display: inline-flex;
+    margin-top: 1rem;
+    color: var(--brand-red);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 860px) {
+    .app-actions {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .app-page {
+      padding: 2.5rem 0 3.5rem;
+    }
+
+    .app-action-card {
+      grid-template-columns: 1fr;
+      padding: 0.95rem;
+    }
+
+    .app-action-btn {
+      width: fit-content;
+    }
+  }
+</style>

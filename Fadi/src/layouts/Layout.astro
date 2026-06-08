@@ -6,12 +6,14 @@ interface Props {
   title: string;
   description?: string;
   image?: string;
+  hidePwaBanner?: boolean;
 }
 
 const {
   title,
   description = "L'Agenzia Funebre FADI opera a Dasà (VV) dal 1991 offrendo servizi funebri di alta qualità con professionalità e discrezione. Disponibili 24 ore su 24.",
-  image = 'https://fadi-lake.vercel.app/og-default.png'
+  image = 'https://fadi-lake.vercel.app/og-default.png',
+  hidePwaBanner = false
 } = Astro.props;
 ---
 
@@ -223,6 +225,7 @@ const {
       }
 
       .pwa-global-banner {
+        position: relative;
         background: #ffffff;
         border-bottom: 1px solid var(--brand-red-border);
       }
@@ -231,10 +234,36 @@ const {
         width: 100%;
         max-width: 1100px;
         margin: 0 auto;
-        padding: 0.45rem 1.5rem;
+        padding: 0.45rem 3.2rem 0.45rem 1.5rem;
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 0.5rem;
+      }
+
+      .pwa-dismiss-btn {
+        position: absolute;
+        top: 0.35rem;
+        right: 0.55rem;
+        z-index: 2;
+        width: 1.85rem;
+        height: 1.85rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--brand-red-border);
+        border-radius: 50%;
+        background: #ffffff;
+        color: var(--brand-red);
+        cursor: pointer;
+        font-size: 1.15rem;
+        line-height: 1;
+        transition: background var(--transition), color var(--transition), border-color var(--transition);
+      }
+
+      .pwa-dismiss-btn:hover {
+        background: var(--brand-red);
+        border-color: var(--brand-red);
+        color: #ffffff;
       }
 
       .pwa-install,
@@ -320,7 +349,7 @@ const {
 
       @media (max-width: 640px) {
         .pwa-global-inner {
-          padding: 0.38rem 1rem;
+          padding: 0.55rem 3rem 0.55rem 1rem;
         }
 
         .pwa-install,
@@ -341,7 +370,10 @@ const {
   </head>
   <body>
     <Header />
-    <aside class="pwa-global-banner" data-pwa-banner aria-label="App FADI Necrologi">
+    {!hidePwaBanner && <aside class="pwa-global-banner" data-pwa-banner data-pwa-dismissible aria-label="App FADI Necrologi">
+      <button class="pwa-dismiss-btn" type="button" data-pwa-dismiss aria-label="Nascondi avvisi app per 10 giorni">
+        &times;
+      </button>
       <div class="pwa-global-inner">
         <div class="pwa-install" data-pwa-install>
           <div class="pwa-banner-copy">
@@ -364,7 +396,7 @@ const {
           </button>
         </div>
       </div>
-    </aside>
+    </aside>}
     <main>
       <slot />
     </main>
