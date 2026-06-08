@@ -98,6 +98,13 @@
     if (!status || !steps) return;
 
     function render() {
+      if (isStandalone()) {
+        root.hidden = true;
+        if (button) button.hidden = true;
+        updateGlobalBannerVisibility();
+        return;
+      }
+
       const guidance = getInstallGuidance();
       root.hidden = false;
       status.textContent = guidance.status;
@@ -108,9 +115,7 @@
         button.textContent = guidance.button || 'Installa app';
       }
 
-      if (isStandalone()) {
-        root.hidden = true;
-      }
+      updateGlobalBannerVisibility();
     }
 
     button?.addEventListener('click', async () => {
@@ -145,24 +150,38 @@
 
   async function initNotificationControl(root, registration) {
     const button = root.querySelector('[data-pwa-notifications-button]');
-    if (!button || !registration || !('PushManager' in window) || !('Notification' in window)) return;
+    if (isStandalone() || !button || !registration || !('PushManager' in window) || !('Notification' in window)) {
+      root.hidden = true;
+      updateGlobalBannerVisibility();
+      return;
+    }
 
     root.hidden = false;
     let subscription = await registration.pushManager.getSubscription();
 
     function render() {
       if (subscription) {
-        button.textContent = 'Notifiche attive';
-        button.dataset.active = 'true';
-        setStatus(root, 'Riceverai un avviso quando viene pubblicato un nuovo necrologio.', 'success');
+        root.hidden = true;
+        updateGlobalBannerVisibility();
         return;
       }
 
+      if (Notification.permission === 'granted') {
+        button.textContent = 'Notifiche attive';
+        button.dataset.active = 'true';
+        setStatus(root, 'Riceverai un avviso quando viene pubblicato un nuovo necrologio.', 'success');
+        root.hidden = true;
+        updateGlobalBannerVisibility();
+        return;
+      }
+
+      root.hidden = false;
       button.textContent = Notification.permission === 'denied' ? 'Notifiche bloccate' : 'Attiva notifiche';
       button.dataset.active = 'false';
       setStatus(root, Notification.permission === 'denied'
         ? 'Le notifiche sono bloccate nelle impostazioni del browser.'
         : 'Ricevi un avviso quando viene pubblicato un nuovo necrologio.', Notification.permission === 'denied' ? 'error' : 'idle');
+      updateGlobalBannerVisibility();
     }
 
     button.addEventListener('click', async () => {
@@ -208,6 +227,13 @@
     render();
   }
 
+  function updateGlobalBannerVisibility() {
+    document.querySelectorAll('[data-pwa-banner]').forEach((banner) => {
+      const visiblePanels = banner.querySelectorAll('[data-pwa-install]:not([hidden]), [data-pwa-notifications]:not([hidden])');
+      banner.hidden = visiblePanels.length === 0;
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', async () => {
     const registration = await registerServiceWorker().catch(() => null);
     document.querySelectorAll('[data-pwa-install]').forEach((root) => {
@@ -216,5 +242,6 @@
     document.querySelectorAll('[data-pwa-notifications]').forEach((root) => {
       initNotificationControl(root, registration);
     });
+    updateGlobalBannerVisibility();
   });
 })();
