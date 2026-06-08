@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fadi-pwa-v2';
+const CACHE_NAME = 'fadi-pwa-v3';
 const APP_SHELL = [
   '/offline.html',
   '/favicon-fadi.png',
@@ -35,7 +35,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  if (url.pathname === '/pwa-client.js') {
+  if (url.pathname === '/pwa-client.js' || url.pathname === '/manifest.webmanifest') {
     event.respondWith(fetch(request));
     return;
   }

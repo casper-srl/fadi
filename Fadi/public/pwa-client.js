@@ -1,14 +1,17 @@
 (function () {
   const swPath = '/sw.js';
+  const installedStorageKey = 'fadi-pwa-installed';
   let deferredInstallPrompt = null;
 
   window.addEventListener('beforeinstallprompt', (event) => {
     event.preventDefault();
+    setStoredInstalled(false);
     deferredInstallPrompt = event;
     document.dispatchEvent(new CustomEvent('fadi:pwa-install-ready'));
   });
 
   window.addEventListener('appinstalled', () => {
+    setStoredInstalled(true);
     deferredInstallPrompt = null;
     document.dispatchEvent(new CustomEvent('fadi:pwa-installed'));
   });
@@ -30,6 +33,53 @@
       || window.navigator.standalone === true;
   }
 
+  function setStoredInstalled(value) {
+    try {
+      if (value) {
+        window.localStorage.setItem(installedStorageKey, 'true');
+        return;
+      }
+      window.localStorage.removeItem(installedStorageKey);
+    } catch {
+      // Storage can be unavailable in private or restricted browsing modes.
+    }
+  }
+
+  function hasStoredInstall() {
+    try {
+      return window.localStorage.getItem(installedStorageKey) === 'true';
+    } catch {
+      return false;
+    }
+  }
+
+  function isPwaInstalled() {
+    return isStandalone() || hasStoredInstall();
+  }
+
+  async function detectRelatedInstalledApp() {
+    if (!('getInstalledRelatedApps' in navigator)) return false;
+
+    try {
+      const apps = await navigator.getInstalledRelatedApps();
+      const installed = apps.some((app) => {
+        return app.platform === 'webapp'
+          || app.id === '/necrologi/'
+          || (typeof app.url === 'string' && app.url.includes('/manifest.webmanifest'));
+      });
+
+      if (installed) setStoredInstalled(true);
+      return installed;
+    } catch {
+      return false;
+    }
+  }
+
+  async function refreshInstallState() {
+    if (isPwaInstalled()) return true;
+    return detectRelatedInstalledApp();
+  }
+
   function getInstallGuidance() {
     const ua = window.navigator.userAgent || '';
     const platform = window.navigator.platform || '';
@@ -38,7 +88,7 @@
     const isAndroid = /android/i.test(ua);
     const isDesktop = !isIos && !isAndroid;
 
-    if (isStandalone()) {
+    if (isPwaInstalled()) {
       return {
         status: "L'app FADI Necrologi e gia installata.",
         steps: 'La trovi nella schermata principale o tra le app del dispositivo.',
@@ -98,7 +148,7 @@
     if (!status || !steps) return;
 
     function render() {
-      if (isStandalone()) {
+      if (isPwaInstalled()) {
         root.hidden = true;
         if (button) button.hidden = true;
         updateGlobalBannerVisibility();
@@ -150,7 +200,7 @@
 
   async function initNotificationControl(root, registration) {
     const button = root.querySelector('[data-pwa-notifications-button]');
-    if (isStandalone() || !button || !registration || !('PushManager' in window) || !('Notification' in window)) {
+    if (isPwaInstalled() || !button || !registration || !('PushManager' in window) || !('Notification' in window)) {
       root.hidden = true;
       updateGlobalBannerVisibility();
       return;
@@ -160,6 +210,12 @@
     let subscription = await registration.pushManager.getSubscription();
 
     function render() {
+      if (isPwaInstalled()) {
+        root.hidden = true;
+        updateGlobalBannerVisibility();
+        return;
+      }
+
       if (subscription) {
         root.hidden = true;
         updateGlobalBannerVisibility();
@@ -224,6 +280,7 @@
       }
     });
 
+    document.addEventListener('fadi:pwa-installed', render);
     render();
   }
 
@@ -236,6 +293,7 @@
 
   document.addEventListener('DOMContentLoaded', async () => {
     const registration = await registerServiceWorker().catch(() => null);
+    await refreshInstallState();
     document.querySelectorAll('[data-pwa-install]').forEach((root) => {
       initInstallControl(root);
     });
