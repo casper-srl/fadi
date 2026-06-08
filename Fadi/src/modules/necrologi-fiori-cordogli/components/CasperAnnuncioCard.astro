@@ -1,6 +1,6 @@
 ---
 import type { AnnuncioData } from '../types';
-import { getFotoUrl, formatMorte, formatCerimoniaOra, formatCerimoniaData } from '../utils/formatters';
+import { getFotoUrl, formatMorte, formatCerimoniaBreve } from '../utils/formatters';
 
 interface Props {
   item: AnnuncioData;
@@ -17,20 +17,6 @@ const nomeCompleto = item.nominativo || `${defunto.nome || ''} ${defunto.cognome
 const haFoto   = !!defunto.foto_url;
 const imgSrc   = getFotoUrl(defunto, item.updated_at);
 const dataMorteIta = formatMorte(defunto.data_morte);
-
-// Local function to format ceremonies for the card
-function formatCerimonia(dateTimeStr?: string) {
-  if (!dateTimeStr) return '';
-  try {
-    const d = new Date(dateTimeStr);
-    if (isNaN(d.getTime())) return '';
-    const day = d.getDate();
-    const months = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
-    const hour = String(d.getHours()).padStart(2, '0');
-    const min  = String(d.getMinutes()).padStart(2, '0');
-    return `${day} ${months[d.getMonth()]} alle ore ${hour}:${min}`;
-  } catch { return ''; }
-}
 ---
 
 <article
@@ -98,7 +84,7 @@ function formatCerimonia(dateTimeStr?: string) {
               </svg>
             </span>
             <div class="ceremony-text">
-              <strong>Funerale:</strong> {formatCerimonia(funerale.data_ora)}
+              <strong>Funerale:</strong> {formatCerimoniaBreve(funerale.data_ora)}
             </div>
           </div>
         ) : null}
@@ -114,7 +100,7 @@ function formatCerimonia(dateTimeStr?: string) {
               </svg>
             </span>
             <div class="ceremony-text">
-              <strong>Rosario:</strong> {formatCerimonia(rosario.data_ora)}
+              <strong>Rosario:</strong> {formatCerimoniaBreve(rosario.data_ora)}
             </div>
           </div>
         ) : null}

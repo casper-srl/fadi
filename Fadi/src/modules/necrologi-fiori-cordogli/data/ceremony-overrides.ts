@@ -8,6 +8,11 @@ type CeremonyOverride = {
 };
 
 const ceremonyOverrides: Record<string, CeremonyOverride> = {
+  'raffaele-vita': {
+    funerale: {
+      data_ora: '2026-05-27T16:00:00'
+    }
+  },
   'domenico-sorace': {
     funerale: {
       data_ora: '2026-05-05T16:00:00',
@@ -519,6 +524,13 @@ const ceremonyOverrides: Record<string, CeremonyOverride> = {
   },
 };
 
+function hasMeaningfulTime(value: unknown): boolean {
+  if (typeof value !== 'string') return false;
+  const match = value.match(/(?:T|\s)(\d{2}):(\d{2})/);
+  if (!match) return false;
+  return !(match[1] === '00' && match[2] === '00');
+}
+
 function fillMissingFields<T extends Record<string, unknown>>(
   current: T | undefined,
   override: Partial<T> | undefined
@@ -530,7 +542,12 @@ function fillMissingFields<T extends Record<string, unknown>>(
   for (const [key, value] of Object.entries(override)) {
     if (value === undefined || value === null || value === '') continue;
     const currentValue = merged[key as keyof T];
-    if (currentValue === undefined || currentValue === null || currentValue === '') {
+    if (
+      currentValue === undefined
+      || currentValue === null
+      || currentValue === ''
+      || (key === 'data_ora' && !hasMeaningfulTime(currentValue) && hasMeaningfulTime(value))
+    ) {
       merged[key as keyof T] = value as T[keyof T];
     }
   }

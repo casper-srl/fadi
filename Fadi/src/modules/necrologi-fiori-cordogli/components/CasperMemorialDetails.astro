@@ -238,7 +238,9 @@ const encodedShareText = encodeURIComponent(memorialShareText);
             {rosario.data_ora && (
               <div class="time-block">
                 <span class="time-date">{formatCerimoniaData(rosario.data_ora)}</span>
-                <span class="time-hours">{formatCerimoniaOra(rosario.data_ora)}</span>
+                {formatCerimoniaOra(rosario.data_ora) && (
+                  <span class="time-hours">{formatCerimoniaOra(rosario.data_ora)}</span>
+                )}
               </div>
             )}
             <div class="address-block">
@@ -273,7 +275,9 @@ const encodedShareText = encodeURIComponent(memorialShareText);
             {funerale.data_ora && (
               <div class="time-block">
                 <span class="time-date">{formatCerimoniaData(funerale.data_ora)}</span>
-                <span class="time-hours">{formatCerimoniaOra(funerale.data_ora)}</span>
+                {formatCerimoniaOra(funerale.data_ora) && (
+                  <span class="time-hours">{formatCerimoniaOra(funerale.data_ora)}</span>
+                )}
               </div>
             )}
             <div class="address-block">
