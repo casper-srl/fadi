@@ -49,8 +49,8 @@
 
     if (deferredInstallPrompt) {
       return {
-        status: "Installa l'app per aprire subito gli annunci funebri.",
-        steps: 'Tocca Installa e conferma dal messaggio del browser.',
+        status: 'Apri subito gli annunci funebri dalla schermata principale.',
+        steps: 'Tocca Installa e conferma dal browser.',
         canPrompt: true,
         button: 'Installa app'
       };
@@ -59,7 +59,7 @@
     if (isIos) {
       return {
         status: 'Installa FADI Necrologi su iPhone o iPad.',
-        steps: 'Tocca Condividi, poi Aggiungi alla schermata Home e conferma con Aggiungi.',
+        steps: 'Condividi, poi Aggiungi alla schermata Home.',
         canPrompt: false,
         button: ''
       };
@@ -68,7 +68,7 @@
     if (isAndroid) {
       return {
         status: 'Installa FADI Necrologi sul telefono.',
-        steps: 'Apri il menu del browser e scegli Installa app o Aggiungi a schermata Home.',
+        steps: 'Menu del browser, poi Installa app.',
         canPrompt: false,
         button: ''
       };
@@ -77,7 +77,7 @@
     if (isDesktop) {
       return {
         status: 'Installa FADI Necrologi sul computer.',
-        steps: "Usa l'icona Installa nella barra indirizzi o la voce Installa app nel menu del browser.",
+        steps: "Icona Installa nella barra indirizzi o nel menu del browser.",
         canPrompt: false,
         button: ''
       };
