@@ -188,7 +188,16 @@
       headers: { 'Accept': 'application/json' }
     });
     const json = await response.json().catch(() => ({}));
-    return json.enabled ? json.publicKey : '';
+
+    if (!response.ok) {
+      throw new Error(json.error || 'Servizio notifiche non raggiungibile.');
+    }
+
+    if (!json.enabled || !json.publicKey) {
+      throw new Error('Notifiche non configurate sul server.');
+    }
+
+    return json.publicKey;
   }
 
   function setStatus(root, message, state) {
@@ -208,10 +217,46 @@
 
     root.hidden = false;
     let subscription = await registration.pushManager.getSubscription();
+    let feedback = null;
+    let hideSuccessTimer = null;
+
+    function clearHideSuccessTimer() {
+      if (!hideSuccessTimer) return;
+      window.clearTimeout(hideSuccessTimer);
+      hideSuccessTimer = null;
+    }
+
+    function showFeedback(message, state, buttonText) {
+      feedback = { message, state, buttonText };
+      root.hidden = false;
+      if (buttonText) button.textContent = buttonText;
+      setStatus(root, message, state);
+      updateGlobalBannerVisibility();
+    }
+
+    function showSuccess(message) {
+      clearHideSuccessTimer();
+      showFeedback(message, 'success', 'Notifiche attive');
+      hideSuccessTimer = window.setTimeout(() => {
+        feedback = null;
+        render();
+      }, 4500);
+    }
 
     function render() {
       if (isPwaInstalled()) {
+        clearHideSuccessTimer();
         root.hidden = true;
+        updateGlobalBannerVisibility();
+        return;
+      }
+
+      if (feedback) {
+        root.hidden = false;
+        button.disabled = false;
+        button.dataset.active = feedback.state === 'success' ? 'true' : 'false';
+        button.textContent = feedback.buttonText || (Notification.permission === 'denied' ? 'Notifiche bloccate' : 'Attiva notifiche');
+        setStatus(root, feedback.message, feedback.state);
         updateGlobalBannerVisibility();
         return;
       }
@@ -243,15 +288,26 @@
     button.addEventListener('click', async () => {
       if (subscription) return;
 
+      clearHideSuccessTimer();
+      feedback = null;
       button.disabled = true;
-      setStatus(root, 'Attivazione in corso...', 'idle');
+      button.textContent = 'Attivazione...';
+      setStatus(root, 'Ti chiediamo il permesso per inviare gli avvisi.', 'idle');
 
       try {
-        const publicKey = await getPublicKey();
-        if (!publicKey) throw new Error('Notifiche non configurate.');
+        if (Notification.permission === 'denied') {
+          throw new Error('Le notifiche sono bloccate. Riattivale dalle impostazioni del browser.');
+        }
 
         const permission = await Notification.requestPermission();
-        if (permission !== 'granted') throw new Error('Permesso notifiche non concesso.');
+        if (permission !== 'granted') {
+          throw new Error('Permesso notifiche non concesso.');
+        }
+
+        button.textContent = 'Registro...';
+        setStatus(root, 'Permesso concesso. Registrazione degli avvisi in corso...', 'idle');
+
+        const publicKey = await getPublicKey();
 
         subscription = await registration.pushManager.subscribe({
           userVisibleOnly: true,
@@ -268,15 +324,19 @@
         });
 
         if (!response.ok) {
+          const json = await response.json().catch(() => ({}));
           await subscription.unsubscribe();
           subscription = null;
-          throw new Error('Non siamo riusciti a salvare la sottoscrizione.');
+          throw new Error(json.error || 'Non siamo riusciti a salvare la sottoscrizione.');
         }
+
+        showSuccess('Notifiche attivate. Riceverai un avviso quando viene pubblicato un nuovo necrologio.');
       } catch (error) {
-        setStatus(root, error.message || 'Notifiche non disponibili.', 'error');
+        const message = error instanceof Error ? error.message : 'Notifiche non disponibili.';
+        showFeedback(message, 'error', Notification.permission === 'denied' ? 'Notifiche bloccate' : 'Riprova');
       } finally {
         button.disabled = false;
-        render();
+        if (!feedback) render();
       }
     });
 
