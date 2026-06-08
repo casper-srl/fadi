@@ -132,41 +132,57 @@ const nomeCompleto = item.nominativo || `${defunto.nome || ''} ${defunto.cognome
     font-weight: 700;
     line-height: 1.15;
     color: var(--text);
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .deceased-age {
+    margin: 0 0 1.35rem;
+    color: var(--text-muted);
+    font-family: var(--font-serif);
+    font-size: clamp(1.15rem, 2.1vw, 1.45rem);
+    font-weight: 600;
+    line-height: 1.25;
   }
 
   .dates-eta {
     display: flex;
     flex-wrap: wrap;
-    gap: 1.5rem;
+    gap: 0.95rem 1.45rem;
     margin-bottom: 2rem;
     width: 100%;
   }
 
   .info-tag {
-    display: flex;
-    flex-direction: column;
-    background: #ffffff;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 0.6rem 1.25rem;
-    box-shadow: 0 4px 12px rgba(44, 38, 32, 0.01);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-width: 0;
   }
 
-  .tag-title {
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: 700;
+  .tag-icon {
+    width: 1.15rem;
+    height: 1.15rem;
+    flex: 0 0 auto;
+    color: var(--gold);
+  }
+
+  .tag-icon svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.65;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
   .tag-val {
     font-family: var(--font-serif);
-    font-size: 1.1rem;
+    font-size: 1.08rem;
     font-weight: 600;
     color: var(--text);
-    margin-top: 0.15rem;
+    line-height: 1.25;
   }
 
   .deceased-quote {

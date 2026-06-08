@@ -98,24 +98,29 @@ const encodedShareText = encodeURIComponent(memorialShareText);
       </div>
       <span class="annuncio-label">In Memoria di</span>
       <h1 class="deceased-name">{nomeCompleto}</h1>
+      {(defunto as any).eta_visibile && (defunto as any).eta && (
+        <p class="deceased-age">{(defunto as any).eta} Anni</p>
+      )}
       
       <div class="dates-eta">
         {dataMorteIta && (
           <div class="info-tag">
-            <span class="tag-title">Deceduto il:</span>
+            <span class="tag-icon" aria-label="Data del decesso">
+              <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                <path d="M12 3v18M8 8h8" />
+              </svg>
+            </span>
             <span class="tag-val">{dataMorteIta}</span>
           </div>
         )}
         {dataNascitaIta && (
           <div class="info-tag">
-            <span class="tag-title">Nato il:</span>
+            <span class="tag-icon" aria-label="Data di nascita">
+              <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                <path d="m12 3 2.58 5.82 6.33.67-4.72 4.27 1.32 6.23L12 16.82 6.49 20l1.32-6.23-4.72-4.27 6.33-.67L12 3z" />
+              </svg>
+            </span>
             <span class="tag-val">{dataNascitaIta}</span>
-          </div>
-        )}
-        {(defunto as any).eta_visibile && (defunto as any).eta && (
-          <div class="info-tag">
-            <span class="tag-title">Età:</span>
-            <span class="tag-val">{(defunto as any).eta} Anni</span>
           </div>
         )}
       </div>
