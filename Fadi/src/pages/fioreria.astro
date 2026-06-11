@@ -54,30 +54,33 @@ const galleryImages = await Promise.all(
     <div class="container flower-service-inner">
       <div class="flower-service-copy">
         <p class="notice-label">Servizio fioreria</p>
-        <h2 id="flower-service-title">Vuoi inviare dei fiori per un funerale?</h2>
+        <h2 id="flower-service-title">Puoi ordinare i fiori direttamente online</h2>
         <p>
-          Possiamo aiutarti noi nella scelta della composizione piu adatta. Basta una telefonata:
-          prepariamo fiori, corone o cuscini e li consegniamo direttamente in chiesa, in casa
-          funeraria o al cimitero.
+          Il servizio nasce per rendere l'acquisto piu semplice e veloce, senza dover telefonare
+          piu volte all'agenzia. Scegli il defunto dagli annunci funebri, entra nella sua pagina e
+          clicca il pulsante <strong>INVIA DEI FIORI</strong>.
         </p>
       </div>
       <div class="flower-service-steps" aria-label="Come funziona il servizio fiori">
         <div class="flower-step">
           <span>1</span>
-          <p>Chiama la fioreria o l'agenzia FADI.</p>
+          <p>Vai alla pagina <a href="/necrologi/">Annunci funebri</a>.</p>
         </div>
         <div class="flower-step">
           <span>2</span>
-          <p>Ti aiutiamo a scegliere il fiore piu adatto.</p>
+          <p>Clicca sul defunto per cui vuoi acquistare i fiori.</p>
         </div>
         <div class="flower-step">
           <span>3</span>
-          <p>Ci occupiamo noi della consegna.</p>
+          <p>Nella pagina del defunto premi <strong>INVIA DEI FIORI</strong>.</p>
         </div>
       </div>
       <div class="flower-service-actions">
-        <a href="tel:+390963353321" class="flower-service-call">Chiama 0963 353321</a>
-        <a href="tel:+393398970915" class="flower-service-call secondary">Chiama Maria 339 8970915</a>
+        <a href="/necrologi/" class="flower-service-call">Vai agli annunci funebri</a>
+        <span class="flower-service-button-preview" aria-label="Pulsante da cercare nella pagina del defunto">
+          <span aria-hidden="true">✾</span>
+          INVIA DEI FIORI
+        </span>
       </div>
     </div>
   </section>
@@ -317,6 +320,10 @@ const galleryImages = await Promise.all(
     font-size: 1.08rem;
     line-height: 1.75;
   }
+  .flower-service-copy strong {
+    color: #ffffff;
+    font-weight: 700;
+  }
   .flower-service-steps {
     display: grid;
     gap: 0.65rem;
@@ -348,6 +355,16 @@ const galleryImages = await Promise.all(
     color: rgba(255, 250, 242, 0.94);
     font-size: 0.96rem;
     line-height: 1.45;
+  }
+  .flower-step a {
+    color: #ffffff;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .flower-step strong {
+    color: #ffffff;
+    font-weight: 700;
   }
   .flower-service-actions {
     grid-column: 1 / -1;
@@ -385,6 +402,22 @@ const galleryImages = await Promise.all(
   .flower-service-call.secondary:hover {
     background: rgba(255, 250, 242, 0.2);
     color: #fffaf2;
+  }
+  .flower-service-button-preview {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 46px;
+    min-width: min(320px, 100%);
+    padding: 0.75rem 1.25rem;
+    border: 1px solid rgba(255, 250, 242, 0.72);
+    border-radius: var(--radius);
+    color: #fffaf2;
+    font-size: 0.86rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
   .fioreria-grid {
     display: grid;
