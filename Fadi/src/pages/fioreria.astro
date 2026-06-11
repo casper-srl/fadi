@@ -56,8 +56,8 @@ const galleryImages = await Promise.all(
         <p class="notice-label">Servizio fioreria</p>
         <h2 id="flower-service-title">Puoi ordinare i fiori direttamente online</h2>
         <p>
-          Il servizio nasce per rendere l'acquisto piu semplice e veloce, senza dover telefonare
-          piu volte all'agenzia. Scegli il defunto dagli annunci funebri, entra nella sua pagina e
+          Il servizio nasce per rendere l'acquisto piu semplice e veloce. Scegli il defunto
+          dagli annunci funebri, entra nella sua pagina e
           clicca il pulsante <strong>INVIA DEI FIORI</strong>.
         </p>
       </div>
@@ -70,17 +70,19 @@ const galleryImages = await Promise.all(
           <span>2</span>
           <p>Clicca sul defunto per cui vuoi acquistare i fiori.</p>
         </div>
-        <div class="flower-step">
+        <div class="flower-step flower-step--with-preview">
           <span>3</span>
-          <p>Nella pagina del defunto premi <strong>INVIA DEI FIORI</strong>.</p>
+          <div>
+            <p>Nella pagina del defunto premi <strong>INVIA DEI FIORI</strong>:</p>
+            <span class="flower-service-button-preview" aria-label="Pulsante da cercare nella pagina del defunto">
+              <span aria-hidden="true">✾</span>
+              INVIA DEI FIORI
+            </span>
+          </div>
         </div>
       </div>
       <div class="flower-service-actions">
         <a href="/necrologi/" class="flower-service-call">Vai agli annunci funebri</a>
-        <span class="flower-service-button-preview" aria-label="Pulsante da cercare nella pagina del defunto">
-          <span aria-hidden="true">✾</span>
-          INVIA DEI FIORI
-        </span>
       </div>
     </div>
   </section>
@@ -356,6 +358,12 @@ const galleryImages = await Promise.all(
     font-size: 0.96rem;
     line-height: 1.45;
   }
+  .flower-step--with-preview {
+    align-items: start;
+  }
+  .flower-step--with-preview .flower-service-button-preview {
+    margin-top: 0.75rem;
+  }
   .flower-step a {
     color: #ffffff;
     font-weight: 700;
@@ -409,7 +417,7 @@ const galleryImages = await Promise.all(
     justify-content: center;
     gap: 0.6rem;
     min-height: 46px;
-    min-width: min(320px, 100%);
+    width: min(320px, 100%);
     padding: 0.75rem 1.25rem;
     border: 1px solid rgba(255, 250, 242, 0.72);
     border-radius: var(--radius);
