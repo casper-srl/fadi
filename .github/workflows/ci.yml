@@ -64,6 +64,10 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Trigger Portainer redeploy
+        if: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch' }}
+        run: curl -s -X POST https://portainer-casper.cjampon.ltd/api/webhooks/7c41a5d0-f345-4e3e-b99f-9b560a57359a
+
       - name: Create version tag
         if: steps.version.outputs.release == 'true'
         run: |
