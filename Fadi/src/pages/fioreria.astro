@@ -50,6 +50,38 @@ const galleryImages = await Promise.all(
     <div class="page-hero-deco" aria-hidden="true">✿</div>
   </section>
 
+  <section class="flower-service-notice" aria-labelledby="flower-service-title">
+    <div class="container flower-service-inner">
+      <div class="flower-service-copy">
+        <p class="notice-label">Servizio fioreria</p>
+        <h2 id="flower-service-title">Vuoi inviare dei fiori per un funerale?</h2>
+        <p>
+          Possiamo aiutarti noi nella scelta della composizione piu adatta. Basta una telefonata:
+          prepariamo fiori, corone o cuscini e li consegniamo direttamente in chiesa, in casa
+          funeraria o al cimitero.
+        </p>
+      </div>
+      <div class="flower-service-steps" aria-label="Come funziona il servizio fiori">
+        <div class="flower-step">
+          <span>1</span>
+          <p>Chiama la fioreria o l'agenzia FADI.</p>
+        </div>
+        <div class="flower-step">
+          <span>2</span>
+          <p>Ti aiutiamo a scegliere il fiore piu adatto.</p>
+        </div>
+        <div class="flower-step">
+          <span>3</span>
+          <p>Ci occupiamo noi della consegna.</p>
+        </div>
+      </div>
+      <div class="flower-service-actions">
+        <a href="tel:+390963353321" class="flower-service-call">Chiama 0963 353321</a>
+        <a href="tel:+393398970915" class="flower-service-call secondary">Chiama Maria 339 8970915</a>
+      </div>
+    </div>
+  </section>
+
   <section class="section" id="fioreria-contenuto">
     <div class="container fioreria-grid">
       <div class="fioreria-text">
@@ -247,6 +279,113 @@ const galleryImages = await Promise.all(
     pointer-events: none;
     user-select: none;
   }
+  .flower-service-notice {
+    padding: 2.5rem 0;
+    background:
+      linear-gradient(135deg, rgba(65, 107, 84, 0.94), rgba(123, 166, 142, 0.9)),
+      url('../img/sfondi/fioreria.jpg');
+    background-size: cover;
+    background-position: center;
+    border-bottom: 1px solid var(--fioreria-border-green);
+  }
+  .flower-service-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr);
+    gap: 2rem 3rem;
+    align-items: center;
+  }
+  .flower-service-copy {
+    color: #fffaf2;
+  }
+  .notice-label {
+    margin-bottom: 0.55rem;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 250, 242, 0.8);
+  }
+  .flower-service-copy h2 {
+    max-width: 680px;
+    margin-bottom: 0.75rem;
+    color: #fffaf2;
+    font-size: clamp(1.45rem, 3vw, 2.15rem);
+  }
+  .flower-service-copy p {
+    max-width: 760px;
+    color: rgba(255, 250, 242, 0.92);
+    font-size: 1.08rem;
+    line-height: 1.75;
+  }
+  .flower-service-steps {
+    display: grid;
+    gap: 0.65rem;
+  }
+  .flower-step {
+    display: grid;
+    grid-template-columns: 42px 1fr;
+    gap: 0.85rem;
+    align-items: center;
+    min-height: 58px;
+    padding: 0.8rem 0.9rem;
+    background: rgba(255, 250, 242, 0.14);
+    border: 1px solid rgba(255, 250, 242, 0.22);
+    border-radius: var(--radius);
+    color: #fffaf2;
+  }
+  .flower-step span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #fffaf2;
+    color: var(--fioreria-green-dark);
+    font-weight: 700;
+  }
+  .flower-step p {
+    color: rgba(255, 250, 242, 0.94);
+    font-size: 0.96rem;
+    line-height: 1.45;
+  }
+  .flower-service-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+  }
+  .flower-service-call {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--radius);
+    background: #fffaf2;
+    color: var(--fioreria-green-dark);
+    font-size: 0.86rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+  }
+  .flower-service-call:hover {
+    background: #ffffff;
+    color: var(--fioreria-green-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(28, 55, 40, 0.18);
+  }
+  .flower-service-call.secondary {
+    background: rgba(255, 250, 242, 0.12);
+    border: 1px solid rgba(255, 250, 242, 0.5);
+    color: #fffaf2;
+  }
+  .flower-service-call.secondary:hover {
+    background: rgba(255, 250, 242, 0.2);
+    color: #fffaf2;
+  }
   .fioreria-grid {
     display: grid;
     grid-template-columns: 1fr 360px;
@@ -401,6 +540,9 @@ const galleryImages = await Promise.all(
   }
 
   @media (max-width: 900px) {
+    .flower-service-inner { grid-template-columns: 1fr; gap: 1.5rem; }
+    .flower-service-actions { flex-direction: column; }
+    .flower-service-call { width: 100%; }
     .fioreria-grid { grid-template-columns: 1fr; gap: 2.5rem; }
     .fioreria-side { position: static; }
     .page-hero-deco { display: none; }
