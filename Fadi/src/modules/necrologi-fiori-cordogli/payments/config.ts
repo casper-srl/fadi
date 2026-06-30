@@ -10,7 +10,8 @@ export interface PaymentRuntimeConfig {
 }
 
 function readEnv(name: string): string {
-  return import.meta.env[name] || '';
+  const runtimeEnv = (globalThis as any).process?.env?.[name];
+  return runtimeEnv || import.meta.env[name] || '';
 }
 
 export function getPaymentRuntimeConfig(): PaymentRuntimeConfig {
