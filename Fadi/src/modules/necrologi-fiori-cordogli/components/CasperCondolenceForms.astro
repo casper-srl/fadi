@@ -10,15 +10,16 @@ interface Props {
 const { item, fiori = [] } = Astro.props;
 const onlinePaymentEnabled = isPublicOnlinePaymentEnabled();
 const sourceFiori = fiori.filter((fiore) => fiore.attivo !== false);
-const stripeTestFiore: FioreData = {
-  id: 999999,
-  nome: 'TEST pagamento Stripe',
-  descrizione: 'Articolo provvisorio per verificare il pagamento online. Non ordinare.',
-  prezzo: 0.01,
-  immagine: '/fiori/composizione.png'
-};
 
 const localFioriCatalog = [
+  {
+    id: 'test-pagamento-stripe',
+    nome: 'TEST pagamento Stripe',
+    descrizione: 'Articolo provvisorio per verificare ordine, pagamento e conferma CasPer.',
+    prezzo: 0.01,
+    immagine: '/fiori/composizione.png',
+    aliases: ['test pagamento stripe', 'test stripe']
+  },
   {
     id: 'ciotola-fiori-stagione',
     nome: 'Ciotola di fiori di stagione',
@@ -125,7 +126,7 @@ const matchedLocalFiori: FioreData[] = localFioriCatalog.flatMap(({ aliases, pre
   }];
 });
 
-const activeFiori = onlinePaymentEnabled ? [...matchedLocalFiori, stripeTestFiore] : matchedLocalFiori;
+const activeFiori = matchedLocalFiori;
 
 function getFioreImage(fiore: FioreData): string {
   return fiore.immagine_url || fiore.immagine || fiore.foto_url || fiore.image_url || fiore.url_immagine || '/fiori/composizione.png';
