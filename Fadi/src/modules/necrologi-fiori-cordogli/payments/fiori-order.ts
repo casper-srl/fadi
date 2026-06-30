@@ -3,6 +3,16 @@ import { CasperClient } from '../api/casper-client';
 import type { AnnuncioData, FioreData } from '../types';
 import type { FioriPaymentMethod } from './config';
 
+const STRIPE_TEST_FIORE_ID = 999999;
+const STRIPE_TEST_FIORE_AMOUNT = 0.01;
+const STRIPE_TEST_FIORE: FioreData = {
+  id: STRIPE_TEST_FIORE_ID,
+  nome: 'TEST pagamento Stripe',
+  descrizione: 'Articolo provvisorio per verificare il pagamento online.',
+  prezzo: STRIPE_TEST_FIORE_AMOUNT,
+  attivo: true,
+};
+
 export interface FioriOrderInput {
   fiore_id: unknown;
   importo: unknown;
@@ -55,6 +65,10 @@ function getFioreName(fiore: FioreData): string {
 
 function amountsMatch(left: number, right: number): boolean {
   return Math.abs(left - right) < 0.01;
+}
+
+function isStripeTestFiore(fioreId: number, importo: number): boolean {
+  return fioreId === STRIPE_TEST_FIORE_ID && amountsMatch(importo, STRIPE_TEST_FIORE_AMOUNT);
 }
 
 export function formatEndpointError(detail: unknown): string {
@@ -116,8 +130,9 @@ export async function validateFioriOrderInput(input: FioriOrderInput): Promise<V
     throw new Error('Devi accettare il trattamento dei dati personali.');
   }
 
+  const isTestOrder = isStripeTestFiore(fioreId, importo);
   const [fiori, annuncio] = await Promise.all([
-    client.getFiori(),
+    isTestOrder ? Promise.resolve([STRIPE_TEST_FIORE]) : client.getFiori(),
     client.getAnnuncioBySlug(slug)
   ]);
 
@@ -183,6 +198,7 @@ export async function validateFioriOrderInput(input: FioriOrderInput): Promise<V
       privacy: true,
       accetta_privacy: true,
       provenienza: 1,
+      test_pagamento: isTestOrder,
     }
   };
 }
