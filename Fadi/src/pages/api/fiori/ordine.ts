@@ -49,6 +49,7 @@ export async function POST(context: APIContext): Promise<Response> {
       amount: order.importo,
       currency: 'EUR',
       description: String(order.payload.fiore_nome || 'Ordine fiori FADI'),
+      stripePriceId: order.stripePriceId,
       customer: {
         name: String(order.payload.mittente || ''),
         email: String(order.payload.email || ''),
@@ -58,6 +59,7 @@ export async function POST(context: APIContext): Promise<Response> {
         casper_order_id: casperOrderId,
         annuncio_id: String(order.payload.annuncio_id || ''),
         fiore_id: String(order.fioreId),
+        stripe_price_id: order.stripePriceId || '',
       },
       successUrl: `${origin}/necrologi/${order.payload.annuncio_slug}/?pagamento=fiori-ok`,
       cancelUrl: `${origin}/necrologi/${order.payload.annuncio_slug}/?pagamento=fiori-annullato#invia-fiori`,

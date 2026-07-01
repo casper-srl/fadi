@@ -6,6 +6,7 @@ export interface CheckoutSessionRequest {
   amount: number;
   currency: 'EUR';
   description: string;
+  stripePriceId?: string;
   customer: {
     name: string;
     email: string;
@@ -61,9 +62,13 @@ async function createStripeCheckoutSession(request: CheckoutSessionRequest): Pro
   params.append('customer_email', request.customer.email);
   params.append('client_reference_id', request.casperOrderId || request.metadata.casper_order_id || '');
   params.append('line_items[0][quantity]', '1');
-  params.append('line_items[0][price_data][currency]', request.currency.toLowerCase());
-  params.append('line_items[0][price_data][unit_amount]', String(amountInCents));
-  params.append('line_items[0][price_data][product_data][name]', request.description);
+  if (request.stripePriceId) {
+    params.append('line_items[0][price]', request.stripePriceId);
+  } else {
+    params.append('line_items[0][price_data][currency]', request.currency.toLowerCase());
+    params.append('line_items[0][price_data][unit_amount]', String(amountInCents));
+    params.append('line_items[0][price_data][product_data][name]', request.description);
+  }
   params.append('payment_intent_data[description]', request.description);
   appendMetadata(params, request.metadata);
 

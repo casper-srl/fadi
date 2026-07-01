@@ -28,6 +28,7 @@ export interface ValidatedFioriOrder {
   annuncio: AnnuncioData | null;
   fioreId: number;
   importo: number;
+  stripePriceId?: string;
   metodoPagamento: FioriPaymentMethod;
   payload: Record<string, unknown>;
 }
@@ -51,6 +52,40 @@ function getFioreAmount(fiore: FioreData): number {
 
 function getFioreName(fiore: FioreData): string {
   return fiore.nome || fiore.denominazione || fiore.titolo || fiore.name || `Composizione ${fiore.id}`;
+}
+
+function getFioreStripePriceId(fiore: FioreData): string {
+  const candidates = [
+    fiore.stripe_price_id,
+    fiore.stripePriceId,
+    fiore.stripe_price,
+    fiore.stripePrice,
+    fiore.price_id,
+    fiore.priceId,
+    fiore.codice_stripe,
+    fiore.stripe_codice,
+    fiore.stripe_code,
+    fiore.codice_pagamento,
+    fiore.codice,
+    fiore.stripe?.price_id,
+    fiore.stripe?.priceId,
+    fiore.stripe?.codice,
+    fiore.pagamento?.stripe_price_id,
+    fiore.pagamento?.stripePriceId,
+    fiore.pagamento?.price_id,
+    fiore.pagamento?.priceId,
+    fiore.pagamento?.codice_stripe,
+    fiore.pagamento?.stripe?.price_id,
+    fiore.pagamento?.stripe?.priceId,
+    fiore.pagamento?.stripe?.codice,
+  ];
+
+  for (const candidate of candidates) {
+    const value = asString(candidate);
+    if (/^price_[A-Za-z0-9_]+$/.test(value)) return value;
+  }
+
+  return '';
 }
 
 function amountsMatch(left: number, right: number): boolean {
@@ -141,6 +176,7 @@ export async function validateFioriOrderInput(input: FioriOrderInput): Promise<V
   }
 
   const fioreNome = asString(input.fiore_nome) || getFioreName(fiore);
+  const stripePriceId = getFioreStripePriceId(fiore);
   const paymentLabel = 'online';
 
   return {
@@ -148,6 +184,7 @@ export async function validateFioriOrderInput(input: FioriOrderInput): Promise<V
     annuncio,
     fioreId,
     importo: importoCasper,
+    stripePriceId: stripePriceId || undefined,
     metodoPagamento,
     payload: {
       fiore_id: fioreId,
@@ -158,6 +195,8 @@ export async function validateFioriOrderInput(input: FioriOrderInput): Promise<V
       importo: importoCasper,
       prezzo: importoCasper,
       prezzo_label: new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(importoCasper),
+      stripe_price_id: stripePriceId || undefined,
+      codice_stripe: stripePriceId || undefined,
       quantita: 1,
       slug,
       annuncio_id: annuncioId,
