@@ -110,6 +110,20 @@ function getFioreAmount(fiore: FioreData): number | null {
   return Number.isFinite(value) ? value : null;
 }
 
+function isTruthyValue(value: unknown): boolean {
+  return value === true || value === 1 || value === '1' || value === 'true';
+}
+
+function getFiorePersonalizzazione(fiore: FioreData): { richiesta: boolean; maxCaratteri: number } {
+  const richiesta = isTruthyValue(fiore.personalizzazione?.richiesta ?? fiore.personalizzazione_richiesta);
+  const rawMax = fiore.personalizzazione?.max_caratteri ?? fiore.max_caratteri_personalizzazione;
+  const maxCaratteri = Number(rawMax || 0);
+  return {
+    richiesta,
+    maxCaratteri: Number.isFinite(maxCaratteri) && maxCaratteri > 0 ? maxCaratteri : 0,
+  };
+}
+
 function findSourceFiore(aliases: string[], prezzo: number): FioreData | undefined {
   const normalizedAliases = aliases.map(normalizeFioreName);
   return sourceFiori.find((fiore) => {
@@ -365,6 +379,7 @@ function formatFiorePrice(fiore: FioreData): string {
           const image = getFioreImage(fiore);
           const priceValue = getFiorePriceValue(fiore);
           const priceLabel = formatFiorePrice(fiore);
+          const personalizzazione = getFiorePersonalizzazione(fiore);
 
           return (
             <div
@@ -373,6 +388,9 @@ function formatFiorePrice(fiore: FioreData): string {
               data-product={name}
               data-price={priceValue}
               data-price-label={priceLabel}
+              data-personalization-enabled={personalizzazione.richiesta || personalizzazione.maxCaratteri > 0 ? 'true' : 'false'}
+              data-personalization-required={personalizzazione.richiesta ? 'true' : 'false'}
+              data-personalization-max={personalizzazione.maxCaratteri}
             >
               <div class="fiori-card-img-wrap">
                 <img src={image} alt={name} class="fiori-card-img" loading="lazy" />
@@ -389,6 +407,9 @@ function formatFiorePrice(fiore: FioreData): string {
                     data-product={name}
                     data-price={priceValue}
                     data-price-label={priceLabel}
+                    data-personalization-enabled={personalizzazione.richiesta || personalizzazione.maxCaratteri > 0 ? 'true' : 'false'}
+                    data-personalization-required={personalizzazione.richiesta ? 'true' : 'false'}
+                    data-personalization-max={personalizzazione.maxCaratteri}
                   >
                     Scegli
                   </button>
@@ -443,10 +464,10 @@ function formatFiorePrice(fiore: FioreData): string {
             <input type="text" id="fiori-defunto" name="defunto" class="form-input fiori-readonly-input" readonly />
           </div>
 
-          <!-- Scritta sul nastro -->
-          <div class="form-group fiori-form-full">
+          <!-- Dedica personalizzata -->
+          <div class="form-group fiori-form-full" id="fiori-dedica-group" style="display:none;">
             <label class="form-label" for="fiori-nastro">
-              Scritta sul nastro
+              Dedica personalizzata <span class="fiori-req" id="fiori-dedica-required">*</span>
               <span class="fiori-field-hint">Il testo verrà inserito sul nastro che accompagnerà la composizione floreale</span>
             </label>
             <input type="text" id="fiori-nastro" name="nastro" class="form-input" placeholder="Es. Famiglia Rossi" maxlength="50" />

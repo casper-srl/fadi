@@ -133,6 +133,12 @@ export interface FioreData {
   image_url?: string;
   url_immagine?: string;
   attivo?: boolean | number | string;
+  personalizzazione?: {
+    richiesta?: boolean | number | string;
+    max_caratteri?: number | string | null;
+  };
+  personalizzazione_richiesta?: boolean | number | string;
+  max_caratteri_personalizzazione?: number | string | null;
 }
 
 export interface FioriApiResponse {

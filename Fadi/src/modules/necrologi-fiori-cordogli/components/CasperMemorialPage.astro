@@ -2703,6 +2703,9 @@ const nomeCompleto = item.nominativo || `${defunto.nome || ''} ${defunto.cognome
   let selectedFlowerProduct = '';
   let selectedFlowerPrice   = '';
   let selectedFlowerPriceLabel = '';
+  let selectedFlowerPersonalizationEnabled = false;
+  let selectedFlowerPersonalizationRequired = false;
+  let selectedFlowerPersonalizationMax = 0;
 
   function setFioriStatus(type, message) {
     if (!fioriOrderStatus) return;
@@ -2753,6 +2756,9 @@ const nomeCompleto = item.nominativo || `${defunto.nome || ''} ${defunto.cognome
     selectedFlowerProduct = button.dataset.product || '';
     selectedFlowerPrice = button.dataset.price || '';
     selectedFlowerPriceLabel = button.dataset.priceLabel || selectedFlowerPrice;
+    selectedFlowerPersonalizationEnabled = button.dataset.personalizationEnabled === 'true';
+    selectedFlowerPersonalizationRequired = button.dataset.personalizationRequired === 'true';
+    selectedFlowerPersonalizationMax = Number(button.dataset.personalizationMax || '0');
 
     // Product header
     const nameEl  = document.getElementById('fiori-inline-product-name');
@@ -2772,6 +2778,9 @@ const nomeCompleto = item.nominativo || `${defunto.nome || ''} ${defunto.cognome
     // Reset form fields (except defunto)
     const mittente = document.getElementById('fiori-mittente');
     const nastro   = document.getElementById('fiori-nastro');
+    const dedicaGroup = document.getElementById('fiori-dedica-group');
+    const dedicaRequired = document.getElementById('fiori-dedica-required');
+    const dedicaHint = dedicaGroup?.querySelector('.fiori-field-hint');
     const telefono = document.getElementById('fiori-telefono');
     const email    = document.getElementById('fiori-email');
     const note     = document.getElementById('fiori-note');
@@ -2782,6 +2791,26 @@ const nomeCompleto = item.nominativo || `${defunto.nome || ''} ${defunto.cognome
     if (email)     email.value     = '';
     if (note)      note.value      = '';
     if (privacy)   privacy.checked = false;
+
+    if (dedicaGroup) {
+      dedicaGroup.style.display = selectedFlowerPersonalizationEnabled ? 'block' : 'none';
+    }
+    if (dedicaRequired) {
+      dedicaRequired.style.display = selectedFlowerPersonalizationRequired ? 'inline' : 'none';
+    }
+    if (nastro) {
+      nastro.required = selectedFlowerPersonalizationRequired;
+      if (selectedFlowerPersonalizationMax > 0) {
+        nastro.maxLength = selectedFlowerPersonalizationMax;
+      } else {
+        nastro.removeAttribute('maxlength');
+      }
+    }
+    if (dedicaHint) {
+      dedicaHint.textContent = selectedFlowerPersonalizationMax > 0
+        ? `${selectedFlowerPersonalizationRequired ? 'Obbligatoria' : 'Opzionale'}, massimo ${selectedFlowerPersonalizationMax} caratteri.`
+        : `${selectedFlowerPersonalizationRequired ? 'Obbligatoria' : 'Opzionale'} per questo prodotto.`;
+    }
     hideFioriStatus();
 
     // Show form and scroll to it
@@ -2850,6 +2879,11 @@ const nomeCompleto = item.nominativo || `${defunto.nome || ''} ${defunto.cognome
         return;
       }
 
+      if (selectedFlowerPersonalizationRequired && !nastro) {
+        setFioriStatus('error', 'La dedica personalizzata e obbligatoria per questo prodotto.');
+        return;
+      }
+
       const originalText = fioriSubmitBtn.innerHTML;
       fioriSubmitBtn.disabled = true;
       fioriSubmitBtn.innerHTML = '<span class="spinner-inline"></span> Invio ordine...';
@@ -2887,6 +2921,9 @@ const nomeCompleto = item.nominativo || `${defunto.nome || ''} ${defunto.cognome
         testo_nastro: nastro,
         messaggio_nastro: nastro,
         biglietto: nastro,
+        dedica_personalizzata: nastro,
+        testo_personalizzazione: nastro,
+        personalizzazione: nastro,
         note,
         messaggio: note,
         luogo_consegna: 'Presso il luogo delle esequie',
