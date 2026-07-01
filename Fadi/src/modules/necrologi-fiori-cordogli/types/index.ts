@@ -132,7 +132,7 @@ export interface FioreData {
   foto_url?: string;
   image_url?: string;
   url_immagine?: string;
-  attivo?: boolean;
+  attivo?: boolean | number | string;
 }
 
 export interface FioriApiResponse {

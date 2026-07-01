@@ -9,7 +9,14 @@ interface Props {
 
 const { item, fiori = [] } = Astro.props;
 const onlinePaymentEnabled = isPublicOnlinePaymentEnabled();
-const sourceFiori = fiori.filter((fiore) => fiore.attivo !== false);
+
+function isFioreActive(fiore: FioreData): boolean {
+  const active = fiore.attivo;
+  return active !== false && active !== 0 && active !== '0' && active !== 'false';
+}
+
+const activeFiori = fiori.filter(isFioreActive);
+const sourceFiori = activeFiori;
 
 const localFioriCatalog = [
   {
@@ -126,7 +133,7 @@ const matchedLocalFiori: FioreData[] = localFioriCatalog.flatMap(({ aliases, pre
   }];
 });
 
-const activeFiori = matchedLocalFiori;
+const legacyLocalFioriPreview = matchedLocalFiori;
 
 function getFioreImage(fiore: FioreData): string {
   return fiore.immagine_url || fiore.immagine || fiore.foto_url || fiore.image_url || fiore.url_immagine || '/fiori/composizione.png';
