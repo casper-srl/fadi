@@ -135,11 +135,7 @@ export async function validateFioriOrderInput(input: FioriOrderInput): Promise<V
     throw new Error('Importo della composizione non valido.');
   }
 
-  const personalizzazioneRichiesta = asBoolean(fiore.personalizzazione?.richiesta ?? fiore.personalizzazione_richiesta);
   const maxCaratteriPersonalizzazione = asNumber(fiore.personalizzazione?.max_caratteri ?? fiore.max_caratteri_personalizzazione);
-  if (personalizzazioneRichiesta && !nastro) {
-    throw new Error('La dedica personalizzata e obbligatoria per questo prodotto.');
-  }
   if (Number.isFinite(maxCaratteriPersonalizzazione) && maxCaratteriPersonalizzazione > 0 && nastro.length > maxCaratteriPersonalizzazione) {
     throw new Error(`La dedica personalizzata non puo superare ${maxCaratteriPersonalizzazione} caratteri.`);
   }
@@ -180,7 +176,9 @@ export async function validateFioriOrderInput(input: FioriOrderInput): Promise<V
       nome_defunto: annuncio.defunto?.nome || '',
       cognome_defunto: annuncio.defunto?.cognome || '',
       nastro,
+      testo_fascia: nastro,
       testo_nastro: nastro,
+      testo_biglietto: nastro,
       messaggio_nastro: nastro,
       biglietto: nastro,
       dedica_personalizzata: nastro,

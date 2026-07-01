@@ -2796,10 +2796,10 @@ const nomeCompleto = item.nominativo || `${defunto.nome || ''} ${defunto.cognome
       dedicaGroup.style.display = selectedFlowerPersonalizationEnabled ? 'block' : 'none';
     }
     if (dedicaRequired) {
-      dedicaRequired.style.display = selectedFlowerPersonalizationRequired ? 'inline' : 'none';
+      dedicaRequired.style.display = 'none';
     }
     if (nastro) {
-      nastro.required = selectedFlowerPersonalizationRequired;
+      nastro.required = false;
       if (selectedFlowerPersonalizationMax > 0) {
         nastro.maxLength = selectedFlowerPersonalizationMax;
       } else {
@@ -2808,8 +2808,8 @@ const nomeCompleto = item.nominativo || `${defunto.nome || ''} ${defunto.cognome
     }
     if (dedicaHint) {
       dedicaHint.textContent = selectedFlowerPersonalizationMax > 0
-        ? `${selectedFlowerPersonalizationRequired ? 'Obbligatoria' : 'Opzionale'}, massimo ${selectedFlowerPersonalizationMax} caratteri.`
-        : `${selectedFlowerPersonalizationRequired ? 'Obbligatoria' : 'Opzionale'} per questo prodotto.`;
+        ? `Opzionale, massimo ${selectedFlowerPersonalizationMax} caratteri.`
+        : 'Opzionale per questo prodotto.';
     }
     hideFioriStatus();
 
@@ -2879,11 +2879,6 @@ const nomeCompleto = item.nominativo || `${defunto.nome || ''} ${defunto.cognome
         return;
       }
 
-      if (selectedFlowerPersonalizationRequired && !nastro) {
-        setFioriStatus('error', 'La dedica personalizzata e obbligatoria per questo prodotto.');
-        return;
-      }
-
       const originalText = fioriSubmitBtn.innerHTML;
       fioriSubmitBtn.disabled = true;
       fioriSubmitBtn.innerHTML = '<span class="spinner-inline"></span> Invio ordine...';
@@ -2918,7 +2913,9 @@ const nomeCompleto = item.nominativo || `${defunto.nome || ''} ${defunto.cognome
         nome_defunto: defuntoNome,
         cognome_defunto: defuntoCognome,
         nastro,
+        testo_fascia: nastro,
         testo_nastro: nastro,
+        testo_biglietto: nastro,
         messaggio_nastro: nastro,
         biglietto: nastro,
         dedica_personalizzata: nastro,
