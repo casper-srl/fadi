@@ -54,6 +54,7 @@ VAPID_PUBLIC_KEY=...
 VAPID_PRIVATE_KEY=...
 VAPID_SUBJECT=mailto:info@fadi.it
 CRON_SECRET=...
+NOTIFICATIONS_WEBHOOK_SECRET=...
 KV_REST_API_URL=...
 KV_REST_API_TOKEN=...
 ```
@@ -62,6 +63,26 @@ Le chiavi VAPID si generano con:
 
 ```sh
 npx web-push generate-vapid-keys
+```
+
+Webhook nuovo AF per notificare subito la pubblicazione di un necrologio:
+
+```http
+POST https://fadi.annuncifunebri.it/api/notifications/annuncio-pubblicato
+Authorization: Bearer ${NOTIFICATIONS_WEBHOOK_SECRET}
+Content-Type: application/json
+```
+
+```json
+{
+  "event": "annuncio.pubblicato",
+  "id": 142900,
+  "slug": "mario-rossi",
+  "nominativo": "Mario Rossi",
+  "paese": "Dasa",
+  "foto_url": "https://...",
+  "published_at": "2026-07-02"
+}
 ```
 
 ## Build

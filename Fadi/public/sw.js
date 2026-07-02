@@ -60,8 +60,9 @@ self.addEventListener('push', (event) => {
   const title = data.title || 'Nuovo necrologio FADI';
   const options = {
     body: data.body || 'E stato pubblicato un nuovo annuncio funebre.',
-    icon: '/icons/pwa-192.png',
+    icon: data.icon || '/icons/pwa-192.png',
     badge: '/icons/pwa-192.png',
+    image: data.image || undefined,
     data: {
       url: data.url || '/necrologi/'
     },

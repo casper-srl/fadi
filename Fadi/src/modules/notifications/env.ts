@@ -32,3 +32,7 @@ export function getVapidConfig() {
 export function getCronSecret(): string {
   return getServerEnv('CRON_SECRET') || getServerEnv('NOTIFICATION_CRON_SECRET');
 }
+
+export function getNotificationsWebhookSecret(): string {
+  return getServerEnv('NOTIFICATIONS_WEBHOOK_SECRET') || getCronSecret();
+}

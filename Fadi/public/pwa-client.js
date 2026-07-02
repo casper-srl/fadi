@@ -339,7 +339,10 @@
       }
 
       if (subscription) {
-        root.hidden = true;
+        button.textContent = 'Disattiva notifiche';
+        button.dataset.active = 'true';
+        setStatus(root, 'Le notifiche per i nuovi necrologi sono attive su questo dispositivo.', 'success');
+        root.hidden = false;
         updateGlobalBannerVisibility();
         return;
       }
@@ -363,11 +366,36 @@
     }
 
     button.addEventListener('click', async () => {
-      if (subscription) return;
-
       clearHideSuccessTimer();
       feedback = null;
       button.disabled = true;
+
+      if (subscription) {
+        button.textContent = 'Disattivazione...';
+        setStatus(root, 'Stiamo disattivando le notifiche su questo dispositivo.', 'idle');
+
+        try {
+          const endpoint = subscription.endpoint;
+          await subscription.unsubscribe();
+          await fetch('/api/notifications/unsubscribe', {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ endpoint })
+          });
+          subscription = null;
+          showFeedback('Notifiche disattivate. Non riceverai piu avvisi su questo dispositivo.', 'idle', 'Attiva notifiche');
+        } catch (error) {
+          const message = error instanceof Error ? error.message : 'Non siamo riusciti a disattivare le notifiche.';
+          showFeedback(message, 'error', 'Riprova');
+        } finally {
+          button.disabled = false;
+        }
+        return;
+      }
+
       button.textContent = 'Attivazione...';
       setStatus(root, 'Ti chiediamo il permesso per inviare gli avvisi.', 'idle');
 
