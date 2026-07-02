@@ -15,8 +15,43 @@ interface Props {
 const { item, slug, fiori = [], cordogli = [], fotoCordogli = [] } = Astro.props;
 const defunto = item.defunto || {};
 const nomeCompleto = item.nominativo || `${defunto.nome || ''} ${defunto.cognome || ''}`.trim();
+const paymentStatus = Astro.url.searchParams.get('pagamento');
+const showFioriPaymentSuccess = paymentStatus === 'fiori-ok';
+const showFioriPaymentCancelled = paymentStatus === 'fiori-annullato';
 ---
 
+{(showFioriPaymentSuccess || showFioriPaymentCancelled) && (
+  <section
+    id="fiori-payment-feedback"
+    class:list={[
+      'fiori-payment-feedback',
+      showFioriPaymentSuccess ? 'fiori-payment-feedback-success' : 'fiori-payment-feedback-cancelled'
+    ]}
+    tabindex="-1"
+    aria-live="polite"
+  >
+    <div class="container">
+      {showFioriPaymentSuccess ? (
+        <div class="fiori-payment-feedback-box">
+          <div class="fiori-payment-feedback-kicker">Ordine fiori ricevuto</div>
+          <h2>Grazie, il pagamento e andato a buon fine.</h2>
+          <p>
+            Abbiamo ricevuto il tuo ordine per {nomeCompleto}. La fioreria prendera in carico la richiesta
+            e riceverai la conferma all'indirizzo email indicato nell'ordine.
+          </p>
+        </div>
+      ) : (
+        <div class="fiori-payment-feedback-box">
+          <div class="fiori-payment-feedback-kicker">Pagamento non completato</div>
+          <h2>L'ordine non risulta confermato.</h2>
+          <p>
+            Puoi riprovare il pagamento oppure scegliere nuovamente la composizione floreale dalla sezione fiori.
+          </p>
+        </div>
+      )}
+    </div>
+  </section>
+)}
 <CasperMemorialDetails item={item} />
 <CasperMessagesList item={item} cordogli={cordogli} fotoCordogli={fotoCordogli} />
 <CasperCondolenceForms item={item} fiori={fiori} />
@@ -669,6 +704,55 @@ const nomeCompleto = item.nominativo || `${defunto.nome || ''} ${defunto.cognome
     background-color: var(--gold-dim);
     color: var(--gold);
     border: 1px solid var(--border);
+  }
+
+  .fiori-payment-feedback {
+    padding: 1.25rem 0 0;
+    background: var(--bg);
+    outline: none;
+  }
+
+  .fiori-payment-feedback-box {
+    border-radius: 6px;
+    padding: 1.35rem 1.5rem;
+    border: 1px solid rgba(46, 125, 89, 0.28);
+    background: linear-gradient(135deg, rgba(46, 125, 89, 0.12), rgba(255, 255, 255, 0.92));
+    box-shadow: 0 12px 28px rgba(44, 38, 32, 0.08);
+  }
+
+  .fiori-payment-feedback-cancelled .fiori-payment-feedback-box {
+    border-color: rgba(107, 20, 38, 0.28);
+    background: linear-gradient(135deg, rgba(107, 20, 38, 0.1), rgba(255, 255, 255, 0.94));
+  }
+
+  .fiori-payment-feedback-kicker {
+    margin-bottom: 0.4rem;
+    color: #2e7d59;
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .fiori-payment-feedback-cancelled .fiori-payment-feedback-kicker {
+    color: var(--burgundy, #6b1426);
+  }
+
+  .fiori-payment-feedback h2 {
+    margin: 0 0 0.45rem;
+    color: var(--text);
+    font-family: var(--font-serif);
+    font-size: clamp(1.35rem, 2.6vw, 2rem);
+    line-height: 1.18;
+  }
+
+  .fiori-payment-feedback p {
+    margin: 0;
+    max-width: 760px;
+    color: var(--text-muted);
+    font-size: 0.98rem;
+    line-height: 1.65;
   }
 
   /* Spinner */
@@ -1958,6 +2042,14 @@ const nomeCompleto = item.nominativo || `${defunto.nome || ''} ${defunto.cognome
 
 <!-- Client Side Forms and Actions -->
 <script define:vars={{ slug, annuncioId: item.id, defuntoNome: defunto.nome || '', defuntoCognome: defunto.cognome || '', nomeDefuntoCompleto: nomeCompleto || '' }}>
+  const fioriPaymentFeedback = document.getElementById('fiori-payment-feedback');
+  if (fioriPaymentFeedback) {
+    setTimeout(() => {
+      fioriPaymentFeedback.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      fioriPaymentFeedback.focus({ preventScroll: true });
+    }, 120);
+  }
+
 // 1. SUBMIT CONDOLENCE ACTION
   const cordoglioForm = document.getElementById('cordoglio-form');
   const cordoglioStatus = document.getElementById('cordoglio-status');
@@ -2909,6 +3001,10 @@ const nomeCompleto = item.nominativo || `${defunto.nome || ''} ${defunto.cognome
         email,
         mail: email,
         mittente_email: email,
+        invia_email_conferma: true,
+        invia_conferma_email: true,
+        conferma_email: true,
+        email_conferma: email,
         defunto,
         nome_defunto: defuntoNome,
         cognome_defunto: defuntoCognome,
