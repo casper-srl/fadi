@@ -1,6 +1,5 @@
 import type { APIContext } from 'astro';
 import { createCasperFioriOrder, validateFioriOrderInput, type FioriOrderInput } from '../../../modules/necrologi-fiori-cordogli/payments/fiori-order';
-import { onlinePaymentsAreConfigured, createCheckoutSession } from '../../../modules/necrologi-fiori-cordogli/payments/provider';
 
 export const prerender = false;
 
@@ -18,6 +17,44 @@ function getOrigin(context: APIContext): string {
   return context.url.origin;
 }
 
+function findPaymentUrl(source: unknown): string {
+  if (!source || typeof source !== 'object') return '';
+
+  const record = source as Record<string, unknown>;
+  const directKeys = [
+    'checkout_url',
+    'payment_url',
+    'paymentUrl',
+    'link_pagamento',
+    'url_pagamento',
+    'pagamento_url',
+    'pagamentoUrl',
+    'redirect_url',
+    'redirectUrl',
+    'stripe_checkout_url',
+    'stripeCheckoutUrl',
+  ];
+
+  for (const key of directKeys) {
+    const value = record[key];
+    if (typeof value === 'string' && /^https?:\/\//i.test(value)) return value;
+  }
+
+  for (const value of Object.values(record)) {
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        const nested = findPaymentUrl(item);
+        if (nested) return nested;
+      }
+    } else if (value && typeof value === 'object') {
+      const nested = findPaymentUrl(value);
+      if (nested) return nested;
+    }
+  }
+
+  return '';
+}
+
 export async function POST(context: APIContext): Promise<Response> {
   let body: FioriOrderInput;
 
@@ -29,48 +66,36 @@ export async function POST(context: APIContext): Promise<Response> {
 
   try {
     const order = await validateFioriOrderInput(body);
-
-    if (!onlinePaymentsAreConfigured()) {
-      return jsonResponse({
-        success: false,
-        error: 'Il pagamento online non e ancora attivo. Riprova piu tardi.',
-        code: 'ONLINE_PAYMENT_NOT_CONFIGURED',
-      }, 503);
-    }
+    const origin = getOrigin(context);
+    const successUrl = `${origin}/necrologi/${order.payload.annuncio_slug}/?pagamento=fiori-ok`;
+    const cancelUrl = `${origin}/necrologi/${order.payload.annuncio_slug}/?pagamento=fiori-annullato#invia-fiori`;
 
     const casperOrder = await createCasperFioriOrder({
       ...order.payload,
       stato_pagamento: 'in_attesa_pagamento',
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      url_success: successUrl,
+      url_cancel: cancelUrl,
+      redirect_success_url: successUrl,
+      redirect_cancel_url: cancelUrl,
     });
-    const casperOrderId = String((casperOrder.data as any)?.id || (casperOrder as any).id || '');
-    const origin = getOrigin(context);
-    const checkout = await createCheckoutSession({
-      casperOrderId,
-      amount: order.importo,
-      currency: 'EUR',
-      description: String(order.payload.fiore_nome || 'Ordine fiori FADI'),
-      stripePriceId: order.stripePriceId,
-      customer: {
-        name: String(order.payload.mittente || ''),
-        email: String(order.payload.email || ''),
-        phone: String(order.payload.telefono || ''),
-      },
-      metadata: {
-        casper_order_id: casperOrderId,
-        annuncio_id: String(order.payload.annuncio_id || ''),
-        fiore_id: String(order.fioreId),
-        stripe_price_id: order.stripePriceId || '',
-      },
-      successUrl: `${origin}/necrologi/${order.payload.annuncio_slug}/?pagamento=fiori-ok`,
-      cancelUrl: `${origin}/necrologi/${order.payload.annuncio_slug}/?pagamento=fiori-annullato#invia-fiori`,
-    });
+    const checkoutUrl = findPaymentUrl(casperOrder);
+
+    if (!checkoutUrl) {
+      return jsonResponse({
+        success: false,
+        error: 'Ordine registrato, ma Cas-Per non ha restituito il link per completare il pagamento.',
+        code: 'CASPER_PAYMENT_URL_MISSING',
+        casper_order: casperOrder,
+      }, 502);
+    }
 
     return jsonResponse({
       success: true,
       payment_required: true,
-      checkout_url: checkout.checkoutUrl,
-      provider: checkout.provider,
-      session_id: checkout.sessionId,
+      checkout_url: checkoutUrl,
+      provider: 'casper',
       casper_order: casperOrder,
     });
   } catch (error) {

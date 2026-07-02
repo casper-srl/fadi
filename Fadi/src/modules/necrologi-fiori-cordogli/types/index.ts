@@ -127,34 +127,6 @@ export interface FioreData {
   prezzo_ivato?: number | string;
   price?: number | string;
   amount?: number | string;
-  stripe_price_id?: string;
-  stripePriceId?: string;
-  stripe_price?: string;
-  stripePrice?: string;
-  price_id?: string;
-  priceId?: string;
-  codice_stripe?: string;
-  stripe_codice?: string;
-  stripe_code?: string;
-  codice_pagamento?: string;
-  codice?: string;
-  stripe?: {
-    price_id?: string;
-    priceId?: string;
-    codice?: string;
-  };
-  pagamento?: {
-    stripe_price_id?: string;
-    stripePriceId?: string;
-    price_id?: string;
-    priceId?: string;
-    codice_stripe?: string;
-    stripe?: {
-      price_id?: string;
-      priceId?: string;
-      codice?: string;
-    };
-  };
   immagine_url?: string;
   immagine?: string;
   foto_url?: string;

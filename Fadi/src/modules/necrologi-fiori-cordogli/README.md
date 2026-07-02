@@ -14,9 +14,9 @@ Modulo Astro copiabile per integrare CasPer in un sito di onoranze funebri.
 - `components/CasperMemorialDetails.astro`: dettaglio manifesto/cerimonie.
 - `components/CasperMessagesList.astro`: area messaggi e foto ricevuti.
 - `components/CasperCondolenceForms.astro`: form cordoglio, foto-cordoglio e ordine fiori.
-- `payments/`: validazione server-side ordine fiori, configurazione gateway e webhook pagamento.
+- `payments/`: validazione server-side ordine fiori prima dell'invio a CasPer.
 - `pages/api/fiori/ordine.ts`: endpoint server Astro per creare l'ordine fiori senza esporre la chiave CasPer nel browser.
-- `pages/api/pagamenti/webhook.ts`: endpoint webhook pronto per il provider di pagamento.
+- `pages/api/pagamenti/webhook.ts`: endpoint webhook legacy, non necessario se pagamenti e notifiche sono gestiti dal nuovo AF/CasPer.
 
 ## Come riusarlo
 
@@ -29,19 +29,13 @@ CASPER_API_KEY=...
 
 Se riusi anche la PWA con notifiche nuovi necrologi, copia le rotte `/api/notifications/*`, `public/sw.js`, `public/manifest.webmanifest`, `public/pwa-client.js`, `public/offline.html`, le icone PWA e configura `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`, `CRON_SECRET`, `KV_REST_API_URL`, `KV_REST_API_TOKEN`.
 
-Per abilitare il pagamento online quando il gateway e gli endpoint CasPer saranno disponibili:
+Per mostrare il pagamento online nel form fiori:
 
 ```env
 PUBLIC_FIORI_ONLINE_PAYMENTS_ENABLED=true
-FIORI_ONLINE_PAYMENTS_ENABLED=true
-FIORI_PAYMENT_PROVIDER=stripe
-STRIPE_SECRET_KEY=
-STRIPE_WEBHOOK_SECRET=
-FIORI_PAYMENT_WEBHOOK_SECRET=
-CASPER_PAYMENT_STATUS_ENDPOINT=https://api.cas-per.it/api/.../{orderId}
 ```
 
-Il provider Stripe crea una sessione Checkout ospitata da Stripe e verifica i webhook tramite `Stripe-Signature`. `FIORI_PAYMENT_WEBHOOK_SECRET` resta disponibile per provider generici futuri. L'ordine fiori viene sempre validato lato server contro catalogo CasPer (`fiore_id` e `importo`) prima di essere registrato.
+Stripe non viene gestito da questo sito. I dati Stripe, la modalita test/live, la creazione del pagamento e le notifiche restano sul nuovo AF/CasPer. FADI invia l'ordine fiori a CasPer e reindirizza l'utente al link di pagamento restituito dall'API.
 
 3. Crea le rotte `/necrologi/` e `/necrologi/[slug]/` importando client e componenti dal modulo.
 
