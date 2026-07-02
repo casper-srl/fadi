@@ -29,10 +29,10 @@ CASPER_API_KEY=...
 
 Se riusi anche la PWA con notifiche nuovi necrologi, copia le rotte `/api/notifications/*`, `public/sw.js`, `public/manifest.webmanifest`, `public/pwa-client.js`, `public/offline.html`, le icone PWA e configura `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`, `CRON_SECRET`, `KV_REST_API_URL`, `KV_REST_API_TOKEN`.
 
-Per mostrare il pagamento online nel form fiori:
+Il pagamento online nel form fiori e attivo di default. Per disattivarlo temporaneamente:
 
 ```env
-PUBLIC_FIORI_ONLINE_PAYMENTS_ENABLED=true
+PUBLIC_FIORI_ONLINE_PAYMENTS_ENABLED=false
 ```
 
 Stripe non viene gestito da questo sito. I dati Stripe, la modalita test/live, la creazione del pagamento e le notifiche restano sul nuovo AF/CasPer. FADI invia l'ordine fiori a CasPer e reindirizza l'utente al link di pagamento restituito dall'API.

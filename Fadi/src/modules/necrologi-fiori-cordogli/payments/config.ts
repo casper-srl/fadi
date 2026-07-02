@@ -26,5 +26,5 @@ export function getPaymentRuntimeConfig(): PaymentRuntimeConfig {
 }
 
 export function isPublicOnlinePaymentEnabled(): boolean {
-  return readEnv('PUBLIC_FIORI_ONLINE_PAYMENTS_ENABLED') === 'true';
+  return readEnv('PUBLIC_FIORI_ONLINE_PAYMENTS_ENABLED') !== 'false';
 }
