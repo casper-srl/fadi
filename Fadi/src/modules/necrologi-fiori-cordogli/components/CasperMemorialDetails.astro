@@ -23,7 +23,7 @@ const dataMorteIta = formatMorte(defunto.data_morte);
 const dataNascitaIta = formatNascita(defunto.data_nascita);
 const familySlug = item.slug || '';
 const familyAreaUrl = familySlug
-  ? `https://admin.annuncifunebri.it/famiglia/${encodeURIComponent(familySlug)}`
+  ? `/famigila/${encodeURIComponent(familySlug)}`
   : '';
 const memorialShareUrl = familySlug
   ? `https://fadi-lake.vercel.app/necrologi/${encodeURIComponent(familySlug)}/`

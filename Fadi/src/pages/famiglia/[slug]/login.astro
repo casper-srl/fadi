@@ -3,7 +3,7 @@ export const prerender = false;
 
 const slug = Astro.params.slug;
 const destination = slug
-  ? `https://admin.annuncifunebri.it/famiglia/${encodeURIComponent(slug)}`
+  ? `/famigila/${encodeURIComponent(slug)}/`
   : '/area-famiglia/';
 
 return Astro.redirect(destination, 302);

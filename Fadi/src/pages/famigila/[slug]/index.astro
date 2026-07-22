@@ -1,0 +1,122 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+export const prerender = false;
+
+const slug = String(Astro.params.slug || '').trim();
+const displayName = slug
+  .split('-')
+  .filter(Boolean)
+  .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+  .join(' ');
+
+if (!slug) return Astro.redirect('/area-famiglia/');
+---
+
+<Layout
+  title={`Area famiglia ${displayName} - FADI`}
+  description={`Accesso riservato all'area famiglia per ${displayName}.`}
+>
+  <section class="family-login-page">
+    <div class="family-login-card">
+      <span class="family-login-kicker">Accesso riservato</span>
+      <h1>Area famiglia</h1>
+      <p>Accesso per la famiglia di {displayName}.</p>
+      <form method="post" action={`/famigila/${encodeURIComponent(slug)}/access`} class="family-login-form">
+        <label for="family-pin">PIN ricevuto</label>
+        <input
+          id="family-pin"
+          name="pin"
+          type="password"
+          inputmode="numeric"
+          autocomplete="one-time-code"
+          placeholder="Inserisci il PIN"
+          autofocus
+          required
+        />
+        <button type="submit" class="btn btn-gold family-login-submit">Accedi</button>
+      </form>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .family-login-page {
+    min-height: calc(100vh - 85px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 1.25rem;
+    background:
+      linear-gradient(135deg, rgba(250, 248, 245, 0.88), rgba(243, 239, 234, 0.82)),
+      url('../../../img/sfondi/servizi.jpg') center/cover;
+  }
+
+  .family-login-card {
+    width: min(100%, 420px);
+    padding: 2rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 24px 70px rgba(44, 38, 32, 0.16);
+  }
+
+  .family-login-kicker {
+    display: block;
+    margin-bottom: 0.45rem;
+    color: var(--gold);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .family-login-card h1 {
+    margin: 0 0 0.4rem;
+    font-size: 1.65rem;
+  }
+
+  .family-login-card p {
+    margin: 0 0 1.25rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .family-login-form {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .family-login-form label {
+    color: var(--text);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .family-login-form input {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    padding: 0.85rem 1rem;
+    outline: none;
+  }
+
+  .family-login-form input:focus {
+    border-color: var(--gold);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(184, 150, 110, 0.12);
+  }
+
+  .family-login-submit {
+    width: 100%;
+    justify-content: center;
+    margin-top: 0.35rem;
+  }
+</style>
+
