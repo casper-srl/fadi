@@ -81,7 +81,7 @@ Content-Type: application/json
   "nominativo": "Mario Rossi",
   "paese": "Dasa",
   "foto_url": "https://...",
-  "published_at": "2026-07-02"
+  "data": "2026-07-02"
 }
 ```
 

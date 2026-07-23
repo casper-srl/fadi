@@ -42,7 +42,7 @@ function normalizePayload(body: Record<string, unknown>): NewAnnuncioNotificatio
   const paese = asString(body.paese ?? body.comune);
   const foto_url = asString(body.foto_url ?? body.foto ?? body.image_url);
   const url = asString(body.url ?? body.page_url ?? body.pagina_url);
-  const published_at = asString(body.published_at ?? body.data_pubblicazione ?? body.data);
+  const data = asString(body.data);
 
   if (!id || !slug || !nominativo) {
     throw new Error('Payload annuncio non valido: id, slug e nominativo sono obbligatori.');
@@ -55,7 +55,7 @@ function normalizePayload(body: Record<string, unknown>): NewAnnuncioNotificatio
     paese: paese || undefined,
     foto_url: foto_url || undefined,
     url: url || undefined,
-    published_at: published_at || undefined,
+    data: data || undefined,
   };
 }
 
@@ -102,4 +102,3 @@ export async function POST(context: APIContext): Promise<Response> {
     return jsonResponse({ success: false, error: message }, 400);
   }
 }
-

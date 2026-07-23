@@ -10,7 +10,7 @@ export interface NewAnnuncioNotificationItem {
   paese?: string;
   foto_url?: string;
   url?: string;
-  published_at?: string;
+  data?: string;
 }
 
 function configureWebPush() {
@@ -40,7 +40,7 @@ function normalizeAnnuncioData(item: AnnuncioData): NewAnnuncioNotificationItem 
 }
 
 function notificationPayload(item: NewAnnuncioNotificationItem) {
-  const details = [item.paese, formatDate(item.published_at)].filter(Boolean).join(' - ');
+  const details = [item.paese, formatDate(item.data)].filter(Boolean).join(' - ');
   const body = details
     ? `${details}. Tocca per aprire il necrologio.`
     : 'E stato pubblicato un nuovo annuncio funebre. Tocca per aprire il necrologio.';
