@@ -1,5 +1,6 @@
 {
   "name": "fadi-vercel-root",
+  "description": "Bridge di build per Vercel: compila il progetto Astro in Fadi/ e copia l'output nella struttura attesa da Vercel.",
   "private": true,
   "type": "module",
   "engines": {
