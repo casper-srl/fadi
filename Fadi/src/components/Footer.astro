@@ -95,7 +95,9 @@ import logoImage from '../img/logo-fadi.png';
 
 <style>
   .site-footer {
-    background: var(--bg-soft);
+    background:
+      radial-gradient(circle at 12% 20%, rgba(200, 95, 38, 0.12), transparent 18rem),
+      #080808;
     border-top: 1px solid var(--border);
     margin-top: auto;
   }
@@ -124,6 +126,7 @@ import logoImage from '../img/logo-fadi.png';
     width: auto;
     object-fit: contain;
     display: block;
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.34));
     transition: transform var(--transition);
   }
 
@@ -160,7 +163,7 @@ import logoImage from '../img/logo-fadi.png';
     align-items: center;
     gap: 0.4rem;
     font-size: 0.88rem;
-    color: var(--text-muted);
+    color: rgba(247, 241, 232, 0.72);
     text-decoration: none;
     transition: color var(--transition);
   }
@@ -172,7 +175,7 @@ import logoImage from '../img/logo-fadi.png';
   address {
     font-style: normal;
     font-size: 0.88rem;
-    color: var(--text-muted);
+    color: rgba(247, 241, 232, 0.72);
     line-height: 1.7;
   }
 
@@ -208,7 +211,7 @@ import logoImage from '../img/logo-fadi.png';
     gap: 1rem;
     padding: 1.25rem 0;
     font-size: 0.78rem;
-    color: #5a5f72;
+    color: rgba(247, 241, 232, 0.58);
     flex-wrap: wrap;
   }
 
@@ -219,13 +222,13 @@ import logoImage from '../img/logo-fadi.png';
   }
 
   .footer-legal a {
-    color: #5a5f72;
+    color: rgba(247, 241, 232, 0.58);
     text-decoration: none;
     transition: color var(--transition);
   }
 
   .footer-legal a:hover {
-    color: var(--text-muted);
+    color: var(--gold-light);
   }
 
   @media (max-width: 900px) {

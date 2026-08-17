@@ -1,7 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { Image } from 'astro:assets';
-import fioreriaLogo from '../img/fadi-fioreria.png';
 
 // Dynamically import all images from the gallery directory
 const imageGlob = import.meta.glob<{ default: ImageMetadata }>('../img/galleria fioreria/*.{jpeg,jpg,png,webp}');
@@ -44,7 +43,12 @@ const galleryImages = await Promise.all(
         </p>
       </div>
       <div class="hero-image-wrap">
-        <Image src={fioreriaLogo} alt="Fioreria FADI" class="hero-image" />
+        <div class="hero-image" aria-hidden="true"></div>
+        <div class="hero-image-card">
+          <span>Fioreria FADI</span>
+          <strong>Composizioni floreali</strong>
+          <p>Ordini online direttamente dal necrologio.</p>
+        </div>
       </div>
     </div>
     <div class="page-hero-deco" aria-hidden="true">✿</div>
@@ -205,11 +209,11 @@ const galleryImages = await Promise.all(
 
 <style>
   :root {
-    --fioreria-green: #7ba68e; /* Sage green matching the leaf image precisely */
-    --fioreria-green-light: #9cc2ae;
-    --fioreria-green-dark: #416b54; /* Darker sage green for high-contrast and text readability */
-    --fioreria-green-dim: rgba(123, 166, 142, 0.05);
-    --fioreria-border-green: rgba(123, 166, 142, 0.22);
+    --fioreria-green: var(--gold);
+    --fioreria-green-light: var(--gold-light);
+    --fioreria-green-dark: var(--gold);
+    --fioreria-green-dim: var(--gold-dim);
+    --fioreria-border-green: var(--border);
   }
 
   /* Override global elements on this page */
@@ -226,7 +230,7 @@ const galleryImages = await Promise.all(
     border-bottom: 1px solid var(--fioreria-border-green);
     overflow: hidden;
     background-image: 
-      linear-gradient(to right, rgba(123, 166, 142, 0.28) 0%, rgba(250, 248, 245, 0.92) 50%, var(--bg) 100%),
+      linear-gradient(to right, rgba(11, 10, 9, 0.98) 0%, rgba(11, 10, 9, 0.9) 48%, rgba(11, 10, 9, 0.68) 100%),
       url('../img/sfondi/fioreria.jpg');
     background-size: cover;
     background-position: center;
@@ -238,21 +242,63 @@ const galleryImages = await Promise.all(
     align-items: center;
   }
   .hero-image-wrap {
+    position: relative;
+    min-height: 420px;
     border-radius: var(--radius);
-    overflow: visible;
-    border: 0;
-    box-shadow: none;
-    background: transparent;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 24px 62px rgba(0, 0, 0, 0.34);
+    background: var(--bg-card);
   }
   .hero-image {
     width: 100%;
-    height: auto;
-    object-fit: cover;
+    height: 100%;
+    min-height: 420px;
+    background:
+      linear-gradient(180deg, rgba(11, 10, 9, 0.08), rgba(11, 10, 9, 0.62)),
+      url('../img/sfondi/fioreria.jpg');
+    background-size: cover;
+    background-position: center;
     display: block;
-    transition: transform 0.6s ease;
+    transition: transform 0.8s ease, filter 0.8s ease;
   }
   .hero-image-wrap:hover .hero-image {
-    transform: scale(1.03);
+    transform: scale(1.05);
+    filter: saturate(1.08) contrast(1.04);
+  }
+  .hero-image-card {
+    position: absolute;
+    left: 1.4rem;
+    right: 1.4rem;
+    bottom: 1.4rem;
+    padding: 1.35rem 1.45rem;
+    border: 1px solid rgba(200, 95, 38, 0.34);
+    border-radius: 14px;
+    background: rgba(12, 11, 10, 0.78);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .hero-image-card span {
+    display: block;
+    margin-bottom: 0.45rem;
+    color: var(--gold);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .hero-image-card strong {
+    display: block;
+    color: var(--ivory);
+    font-family: var(--font-serif);
+    font-size: 1.45rem;
+    line-height: 1.2;
+  }
+  .hero-image-card p {
+    margin-top: 0.45rem;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    line-height: 1.5;
   }
   .page-hero::before {
     content: '';
@@ -288,7 +334,7 @@ const galleryImages = await Promise.all(
   .flower-service-notice {
     padding: 2.5rem 0;
     background:
-      linear-gradient(135deg, rgba(65, 107, 84, 0.94), rgba(123, 166, 142, 0.9)),
+      linear-gradient(135deg, rgba(11, 10, 9, 0.94), rgba(200, 95, 38, 0.74)),
       url('../img/sfondi/fioreria.jpg');
     background-size: cover;
     background-position: center;
@@ -351,7 +397,7 @@ const galleryImages = await Promise.all(
     height: 34px;
     border-radius: 50%;
     background: #fffaf2;
-    color: var(--fioreria-green-dark);
+    color: #151210;
     font-weight: 700;
   }
   .flower-step p {
@@ -388,7 +434,7 @@ const galleryImages = await Promise.all(
     padding: 0.75rem 1.25rem;
     border-radius: var(--radius);
     background: #fffaf2;
-    color: var(--fioreria-green-dark);
+    color: #151210;
     font-size: 0.86rem;
     font-weight: 700;
     letter-spacing: 0.06em;
@@ -398,7 +444,7 @@ const galleryImages = await Promise.all(
   }
   .flower-service-call:hover {
     background: #ffffff;
-    color: var(--fioreria-green-dark);
+    color: #151210;
     transform: translateY(-1px);
     box-shadow: 0 8px 20px rgba(28, 55, 40, 0.18);
   }

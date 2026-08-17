@@ -162,6 +162,8 @@ import ImageGallery from '../components/ImageGallery.astro';
   /* ABOUT */
   .about-section {
     border-top: 1px solid var(--border);
+    background:
+      linear-gradient(180deg, rgba(11, 10, 9, 0.96), rgba(18, 16, 15, 0.98));
   }
 
   .about-grid {
@@ -177,10 +179,10 @@ import ImageGallery from '../components/ImageGallery.astro';
     gap: 1.5rem;
     margin-top: 2.5rem;
     padding: 1.5rem;
-    background: var(--bg-card);
+    background: rgba(247, 241, 232, 0.96);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: 0 4px 20px rgba(44, 38, 32, 0.02);
+    border-radius: 16px;
+    box-shadow: 0 20px 55px rgba(0, 0, 0, 0.24);
     flex-wrap: wrap;
   }
 
@@ -205,7 +207,7 @@ import ImageGallery from '../components/ImageGallery.astro';
     font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: var(--text-muted);
+    color: #6c6258;
     font-weight: 700;
   }
 
@@ -223,11 +225,11 @@ import ImageGallery from '../components/ImageGallery.astro';
   }
 
   .about-card {
-    background: var(--bg-card);
+    background: rgba(247, 241, 232, 0.96);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: 14px;
     padding: 1.25rem 1.5rem;
-    box-shadow: 0 4px 20px rgba(44, 38, 32, 0.02);
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.22);
     transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
   }
 
@@ -265,13 +267,15 @@ import ImageGallery from '../components/ImageGallery.astro';
 
   .about-card p {
     font-size: 0.88rem;
-    color: var(--text-muted);
+    color: #635a50;
     line-height: 1.6;
   }
 
   /* SERVICES */
   .services-section {
-    background: var(--bg-soft);
+    background:
+      radial-gradient(circle at 85% 10%, rgba(200, 95, 38, 0.14), transparent 22rem),
+      var(--bg);
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
   }
@@ -291,29 +295,29 @@ import ImageGallery from '../components/ImageGallery.astro';
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    background: var(--bg-card);
+    background: rgba(247, 241, 232, 0.94);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: 16px;
     padding: 2rem;
     text-decoration: none;
-    box-shadow: 0 4px 20px rgba(44, 38, 32, 0.02);
+    box-shadow: 0 20px 54px rgba(0, 0, 0, 0.22);
     transition: border-color var(--transition), transform var(--transition), background var(--transition), box-shadow var(--transition);
   }
 
   .service-card:hover {
     border-color: var(--gold);
     transform: translateY(-4px);
-    background: rgba(184,150,110,0.02);
-    box-shadow: 0 8px 30px rgba(184, 150, 110, 0.1);
+    background: #fff8ed;
+    box-shadow: 0 24px 62px rgba(0, 0, 0, 0.3);
   }
 
   .service-card--gold {
     border-color: rgba(184,150,110,0.35);
-    background: rgba(184, 150, 110, 0.04);
+    background: var(--bg-card);
   }
 
   .service-card--gold:hover {
-    background: rgba(184, 150, 110, 0.08);
+    background: var(--bg-elevated);
   }
 
   .service-card-icon {
@@ -331,12 +335,16 @@ import ImageGallery from '../components/ImageGallery.astro';
     font-family: var(--font-serif);
     font-size: 1.2rem;
     font-weight: 600;
+    color: #151210;
+  }
+
+  .service-card--gold h3 {
     color: var(--text);
   }
 
   .service-card p {
     font-size: 0.9rem;
-    color: var(--text-muted);
+    color: #5f574f;
     line-height: 1.65;
     flex: 1;
   }
@@ -349,9 +357,15 @@ import ImageGallery from '../components/ImageGallery.astro';
     margin-top: auto;
   }
 
+  .service-card--gold p {
+    color: var(--text-muted);
+  }
+
   /* CTA STRIP */
   .cta-strip {
-    background: linear-gradient(135deg, rgba(184,150,110,0.1) 0%, rgba(184,150,110,0.05) 100%);
+    background:
+      linear-gradient(135deg, rgba(200, 95, 38, 0.18) 0%, rgba(18, 16, 15, 0.98) 55%),
+      var(--bg-soft);
     border-top: 1px solid var(--border);
     padding: 3rem 0;
   }
@@ -401,3 +415,4 @@ import ImageGallery from '../components/ImageGallery.astro';
     }
   }
 </style>
+    color: #151210;

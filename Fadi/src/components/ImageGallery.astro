@@ -41,7 +41,9 @@ const images = [
 
 <style>
   .image-gallery-section {
-    background: var(--bg);
+    background:
+      radial-gradient(circle at 15% 0%, rgba(200, 95, 38, 0.12), transparent 20rem),
+      var(--bg);
     border-top: 1px solid var(--border);
   }
 
@@ -67,9 +69,25 @@ const images = [
     margin: 0;
     overflow: hidden;
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: 16px;
     background: var(--bg-card);
-    box-shadow: 0 8px 28px rgba(44, 38, 32, 0.06);
+    box-shadow: 0 20px 54px rgba(0, 0, 0, 0.28);
+    transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+  }
+
+  .image-gallery-item:hover {
+    transform: translateY(-5px);
+    border-color: rgba(200, 95, 38, 0.7);
+    box-shadow: 0 28px 68px rgba(0, 0, 0, 0.36);
+  }
+
+  .image-gallery-item::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 45%, rgba(11, 10, 9, 0.42));
+    opacity: 0.75;
+    pointer-events: none;
   }
 
   .image-gallery-item--wide {
@@ -82,11 +100,12 @@ const images = [
     min-height: 230px;
     display: block;
     object-fit: cover;
-    transition: transform var(--transition);
+    transition: transform 0.7s ease, filter 0.7s ease;
   }
 
   .image-gallery-item:hover img {
-    transform: scale(1.035);
+    transform: scale(1.055);
+    filter: saturate(1.08) contrast(1.04);
   }
 
   @media (max-width: 900px) {
