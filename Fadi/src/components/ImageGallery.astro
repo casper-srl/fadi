@@ -32,7 +32,7 @@ const images = [
     <div class="image-gallery-grid">
       {images.map((image, index) => (
         <figure class:list={['image-gallery-item', { 'image-gallery-item--wide': index === 0 || index === 3 }]}>
-          <img src={image.src} alt={image.alt} loading={index < 2 ? 'eager' : 'lazy'} />
+          <img src={image.src} alt={image.alt} loading="eager" />
         </figure>
       ))}
     </div>
