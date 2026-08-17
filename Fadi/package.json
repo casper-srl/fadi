@@ -2,7 +2,7 @@
   "name": "fadi",
   "description": "Sito Astro di Onoranze Funebri FADI: necrologi, cordogli, invio fiori e streaming delle cerimonie, integrato con la piattaforma CasPer.",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "engines": {
     "node": ">=22.12.0"
   },
